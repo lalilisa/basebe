@@ -40,8 +40,6 @@ public class ChatModule {
 
     @Autowired
     private NotificationsRepository notificationsRepository;
-    @Autowired
-    private TokenDeviceRepoditory tokenDeviceRepoditory;
 
     @Autowired
     private UserRepository userRepository;
@@ -85,42 +83,8 @@ public class ChatModule {
                 .build());
 
         User user=userRepository.findById(chatData.getReciverId()).orElse(null);
-        asyncNotifi(user,chatData.getContent());
     }
 
-    private void sendNotifi(User user, String content){
-        DeviceToken deviceToken = tokenDeviceRepoditory.findByUserId(user.getId());
-        Map<String,String> map=new HashMap<>();
-        map.put("type","CHAT");
-        String nickName = user.getFullname()==null? user.getUsername():user.getFullname();
-        Notice notice=Notice.builder()
-                .subject("Thông báo tin nhắn \n")
-                .content(String.format("%s vừa nhắn tin cho bạn: %s",nickName,content))
-                .data(map)
-                .registrationTokens(new ArrayList<>() {{
-                    add(deviceToken.getFcmToken());
-                }})
-                .build();
-        notificationsRepository.save(Notifications.builder().content(
-                notice.getContent())
-                .img(null)
-                .userId(user.getId())
-                .mainRef(null)
-                .title(notice.getSubject())
-                .type("CHAT")
-                .build());
-        fireBaseNotifiCommandService.sendNotification(notice);
-    }
-    private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    private void asyncNotifi(User user,String content){
-        CompletableFuture.runAsync(() -> {
-            try {
-                Thread.sleep(1000);
-                sendNotifi(user,content);
 
-            } catch (InterruptedException e) {
 
-            }
-        }, executorService);
-    }
 }

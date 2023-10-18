@@ -23,4 +23,7 @@ public class Category extends Audiant {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(name = "active")
+    private Boolean active;
 }

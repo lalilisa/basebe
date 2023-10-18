@@ -29,4 +29,7 @@ public class UserOtp extends Audiant{
     @Column(name = "is_expire")
     private Integer isExpire;
 
+    @Column(name = "type")
+    private String type;
+
 }

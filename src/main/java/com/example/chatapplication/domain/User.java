@@ -35,6 +35,7 @@ public class User extends Audiant{
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "dob")
+    @Temporal(TemporalType.DATE)
     private Date dob;
 
     @Column(name = "address")
@@ -52,4 +53,7 @@ public class User extends Audiant{
 
     @Column(name = "is_notifi",columnDefinition = "tinyint(1) DEFAULT '0'")
     private Integer isNotifi;
+
+    @Column(name = "last_device_uuid")
+    private String deviceUUID;
 }

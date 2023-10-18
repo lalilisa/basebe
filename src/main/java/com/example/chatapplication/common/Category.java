@@ -38,4 +38,9 @@ public enum Category {
         private ErrorCodeEnum() {
         }
     };
+
+    public enum MoviesType{
+        MOVIES,
+        SERIES
+    }
 }
