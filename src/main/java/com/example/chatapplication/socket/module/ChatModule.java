@@ -7,8 +7,7 @@ import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.example.chatapplication.common.Category;
 import com.example.chatapplication.domain.*;
-import com.example.chatapplication.dto.request.Notice;
-import com.example.chatapplication.repo.*;
+import com.example.chatapplication.repository.*;
 import com.example.chatapplication.service.write.FireBaseNotifiCommandService;
 import com.example.chatapplication.socket.datalistner.ChatData;
 import org.slf4j.Logger;
@@ -17,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 @Component

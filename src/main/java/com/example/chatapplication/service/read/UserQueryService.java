@@ -7,7 +7,7 @@ import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.User;
 import com.example.chatapplication.dto.view.UserView;
 import com.example.chatapplication.exception.GeneralException;
-import com.example.chatapplication.repo.UserRepository;
+import com.example.chatapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

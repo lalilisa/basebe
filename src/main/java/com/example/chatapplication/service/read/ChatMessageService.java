@@ -2,7 +2,7 @@ package com.example.chatapplication.service.read;
 
 
 import com.example.chatapplication.domain.ChatMessage;
-import com.example.chatapplication.repo.ChatRepository;
+import com.example.chatapplication.repository.ChatRepository;
 import com.example.chatapplication.socket.datalistner.ChatData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

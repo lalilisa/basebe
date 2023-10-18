@@ -1,4 +1,4 @@
-package com.example.chatapplication.repo;
+package com.example.chatapplication.repository;
 
 import com.example.chatapplication.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;

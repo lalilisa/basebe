@@ -1,7 +1,7 @@
 package com.example.chatapplication.service.read;
 
 import com.example.chatapplication.domain.Category;
-import com.example.chatapplication.repo.CategoryRepository;
+import com.example.chatapplication.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
