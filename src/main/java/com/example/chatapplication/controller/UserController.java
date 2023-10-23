@@ -1,11 +1,9 @@
 package com.example.chatapplication.controller;
 
 
-import com.example.chatapplication.dto.request.ChangePassword;
-import com.example.chatapplication.dto.request.UpdateUser;
-import com.example.chatapplication.dto.response.CommonRes;
-import com.example.chatapplication.dto.response.ResponseMessage;
-import com.example.chatapplication.dto.view.UserView;
+import com.example.chatapplication.model.request.ChangePassword;
+import com.example.chatapplication.model.request.UpdateUser;
+import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.service.read.UserQueryService;
 import com.example.chatapplication.service.write.UserCommandService;
 import lombok.RequiredArgsConstructor;

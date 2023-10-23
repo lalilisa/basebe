@@ -15,8 +15,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class MovieCategoryKey implements Serializable {
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "movie_id")
+    private Long movieId;
     @Column(name = "category_id")
     private Long categoryId;
 }

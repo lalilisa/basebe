@@ -2,8 +2,7 @@ package com.example.chatapplication.controller;
 
 
 import com.example.chatapplication.common.Utils;
-import com.example.chatapplication.domain.Category;
-import com.example.chatapplication.dto.response.CommonRes;
+import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.service.read.CategoryQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

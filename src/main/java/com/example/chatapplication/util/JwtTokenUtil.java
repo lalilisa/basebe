@@ -4,7 +4,7 @@ package com.example.chatapplication.util;
 
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.domain.User;
-import com.example.chatapplication.dto.view.UserView;
+import com.example.chatapplication.model.view.UserView;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwt;

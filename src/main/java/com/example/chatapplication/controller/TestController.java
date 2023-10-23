@@ -2,8 +2,7 @@ package com.example.chatapplication.controller;
 
 
 import com.example.chatapplication.common.Utils;
-import com.example.chatapplication.domain.User;
-import com.example.chatapplication.dto.request.Notice;
+import com.example.chatapplication.model.request.Notice;
 import com.example.chatapplication.service.write.FireBaseNotifiCommandService;
 import com.example.chatapplication.socket.module.ChatModule;
 import com.google.zxing.WriterException;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,8 +28,6 @@ public class TestController {
     private ChatModule chatModule;
     @GetMapping(value = "get-qr",produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> test() throws WriterException, IOException {
-
-
         return ResponseEntity.ok(Utils.genQrCode("TRIMAIAAMAAMAMASdassdasdasdas"));
     }
 

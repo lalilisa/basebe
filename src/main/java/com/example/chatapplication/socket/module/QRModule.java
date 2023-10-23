@@ -10,7 +10,7 @@ import com.example.chatapplication.common.Category;
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.User;
-import com.example.chatapplication.dto.response.LoginSocketResponse;
+import com.example.chatapplication.model.response.LoginSocketResponse;
 import com.example.chatapplication.repository.UserRepository;
 import com.example.chatapplication.socket.datalistner.QRRawText;
 import com.example.chatapplication.socket.datalistner.QrDataListener;

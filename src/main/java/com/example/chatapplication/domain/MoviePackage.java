@@ -1,6 +1,7 @@
 package com.example.chatapplication.domain;
 
 import com.example.chatapplication.domain.compositekey.MovieCategoryKey;
+import com.example.chatapplication.domain.compositekey.MoviePackageKey;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +20,5 @@ import javax.persistence.Table;
 public class MoviePackage {
 
     @EmbeddedId
-    private MovieCategoryKey id;
+    private MoviePackageKey id;
 }

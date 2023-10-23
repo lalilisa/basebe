@@ -5,9 +5,9 @@ import com.example.chatapplication.common.Category;
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.User;
-import com.example.chatapplication.dto.request.RegisterRequest;
-import com.example.chatapplication.dto.response.CommonRes;
-import com.example.chatapplication.dto.view.UserView;
+import com.example.chatapplication.model.request.RegisterRequest;
+import com.example.chatapplication.model.response.CommonRes;
+import com.example.chatapplication.model.view.UserView;
 import com.example.chatapplication.exception.GeneralException;
 import com.example.chatapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,19 +21,17 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserQueryService{
+public class UserQueryService {
 
     private final UserRepository userRepository;
 
 
-
-
-    public UserView createUser(RegisterRequest registerRequest){
-        User existedUser=userRepository.findByEmailOrUsernameOrPhonenumber(registerRequest.getEmail(),registerRequest.getUsername(),registerRequest.getPhoneNumber());
-        if(existedUser!=null)
-            throw new GeneralException(Constant.BAD_REQUEST,Category.ErrorCodeEnum.INVALID_PARAMETER.name(),"Username and email is not exist");
-        String hashPassword= Utils.hashPassword(registerRequest.getPassword());
-        User user=User.builder()
+    public UserView createUser(RegisterRequest registerRequest) {
+        User existedUser = userRepository.findByEmailOrUsernameOrPhonenumber(registerRequest.getEmail(), registerRequest.getUsername(), registerRequest.getPhoneNumber());
+        if (existedUser != null)
+            throw new GeneralException(Constant.BAD_REQUEST, Category.ErrorCodeEnum.INVALID_PARAMETER.name(), "Username and email is not exist");
+        String hashPassword = Utils.hashPassword(registerRequest.getPassword());
+        User user = User.builder()
                 .username(registerRequest.getUsername())
                 .password(hashPassword)
                 .email(registerRequest.getEmail())
@@ -42,30 +40,32 @@ public class UserQueryService{
                 .isNotifi(0)
                 .role(Category.Role.USER)
                 .build();
-        User newUser=userRepository.save(user);
+        User newUser = userRepository.save(user);
         return this.convertToView(newUser);
     }
-    public CommonRes getUserInfo(String username){
-        User user=userRepository.findByUsername(username);
-        if(user==null) {
-            return new CommonRes<> (400,true,"User is not exist") ;
+
+    public CommonRes getUserInfo(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return new CommonRes<>(400, true, "User is not exist");
         }
-        return new CommonRes<> (200,false,this.convertToView(user)) ;
+        return new CommonRes<>(200, false, this.convertToView(user));
 
     }
-    public UserView login(String username,String password){
 
-        User user=userRepository.findByUsername(username);
-        if(user==null)
-            throw new GeneralException(Constant.BAD_REQUEST,Category.ErrorCodeEnum.INVALID_PARAMETER.name(),"User is not exist");
-        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
-        if(!encoder.matches(password,user.getPassword()))
-            throw new GeneralException(Constant.BAD_REQUEST,Category.ErrorCodeEnum.INVALID_PARAMETER.name(),"Password is not correct");
-        return this.convertToView(user);
+    public UserView login(String username, String password, String fcmToken) {
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new GeneralException(Constant.BAD_REQUEST, Category.ErrorCodeEnum.INVALID_PARAMETER.name(), "User is not exist");
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(password, user.getPassword()))
+            throw new GeneralException(Constant.BAD_REQUEST, Category.ErrorCodeEnum.INVALID_PARAMETER.name(), "Password is not correct");
+        user.setDeviceUUID(fcmToken);
+        return this.convertToView(userRepository.save(user));
     }
 
 
-    private UserView convertToView(User domain){
+    private UserView convertToView(User domain) {
         return UserView
                 .builder()
                 .id(domain.getId())
@@ -82,9 +82,11 @@ public class UserQueryService{
     }
 
 
-    public List<UserView> getUser(String username){
-        User user=userRepository.findByUsername(username);
-        List<Long> ids=new ArrayList<>(){{add(user.getId());}};
-        return userRepository.findByRoleAndIdNotIn(Category.Role.ADMIN,ids).stream().map(e -> convertToView(e)).collect(Collectors.toList());
+    public List<UserView> getUser(String username) {
+        User user = userRepository.findByUsername(username);
+        List<Long> ids = new ArrayList<>() {{
+            add(user.getId());
+        }};
+        return userRepository.findByRoleAndIdNotIn(Category.Role.ADMIN, ids).stream().map(e -> convertToView(e)).collect(Collectors.toList());
     }
 }

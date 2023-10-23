@@ -4,14 +4,14 @@ package com.example.chatapplication.controller;
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.User;
-import com.example.chatapplication.dto.request.LoginRequest;
-import com.example.chatapplication.dto.request.OtpVerifi;
-import com.example.chatapplication.dto.request.PhonenumberRequest;
-import com.example.chatapplication.dto.request.RegisterRequest;
-import com.example.chatapplication.dto.response.LoginResponse;
-import com.example.chatapplication.dto.response.QrLogin;
-import com.example.chatapplication.dto.response.ResponseMessage;
-import com.example.chatapplication.dto.view.UserView;
+import com.example.chatapplication.model.request.LoginRequest;
+import com.example.chatapplication.model.request.OtpVerifi;
+import com.example.chatapplication.model.request.PhonenumberRequest;
+import com.example.chatapplication.model.request.RegisterRequest;
+import com.example.chatapplication.model.response.LoginResponse;
+import com.example.chatapplication.model.response.QrLogin;
+import com.example.chatapplication.model.response.ResponseMessage;
+import com.example.chatapplication.model.view.UserView;
 import com.example.chatapplication.repository.UserRepository;
 import com.example.chatapplication.service.read.UserQueryService;
 import com.example.chatapplication.service.write.OtpCommandService;
@@ -53,8 +53,8 @@ public class AuthController {
     private final OtpCommandService otpCommandService;
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        UserView user = userQueryService.login(loginRequest.getUsername(), loginRequest.getPassword());
+    public ResponseEntity<?> login(@RequestHeader("deviceUUID") String fcmToken,@RequestBody LoginRequest loginRequest) {
+        UserView user = userQueryService.login(loginRequest.getUsername(), loginRequest.getPassword(),fcmToken);
         Date expireAccess = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 1000);
         Date expireRefresh = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 10000);
         String accessToken = jwtTokenUtil.generateAccountToken(user, expireAccess);

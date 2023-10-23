@@ -1,7 +1,6 @@
 package com.example.chatapplication.service.write;
 
-import com.example.chatapplication.domain.User;
-import com.example.chatapplication.dto.request.Notice;
+import com.example.chatapplication.model.request.Notice;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 @RequiredArgsConstructor

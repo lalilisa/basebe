@@ -1,18 +1,13 @@
 package com.example.chatapplication.service.read;
 
-import com.example.chatapplication.common.Category;
 import com.example.chatapplication.common.Utils;
-import com.example.chatapplication.domain.Notifications;
 import com.example.chatapplication.domain.User;
-import com.example.chatapplication.dto.response.CommonRes;
-import com.example.chatapplication.exception.GeneralException;
+import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.repository.NotificationsRepository;
 import com.example.chatapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @RequiredArgsConstructor
 @Service
