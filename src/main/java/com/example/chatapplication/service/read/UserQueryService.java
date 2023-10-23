@@ -5,6 +5,8 @@ import com.example.chatapplication.common.Category;
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.User;
+import com.example.chatapplication.dto.request.RegisterRequest;
+import com.example.chatapplication.dto.response.CommonRes;
 import com.example.chatapplication.dto.view.UserView;
 import com.example.chatapplication.exception.GeneralException;
 import com.example.chatapplication.repository.UserRepository;
@@ -26,28 +28,30 @@ public class UserQueryService{
 
 
 
-    public UserView createUser(String username,String password,String email){
-        User existedUser=userRepository.findByEmailOrUsername(email,username);
+    public UserView createUser(RegisterRequest registerRequest){
+        User existedUser=userRepository.findByEmailOrUsernameOrPhonenumber(registerRequest.getEmail(),registerRequest.getUsername(),registerRequest.getPhoneNumber());
         if(existedUser!=null)
             throw new GeneralException(Constant.BAD_REQUEST,Category.ErrorCodeEnum.INVALID_PARAMETER.name(),"Username and email is not exist");
-        String hashPassword= Utils.hashPassword(password);
+        String hashPassword= Utils.hashPassword(registerRequest.getPassword());
         User user=User.builder()
-                .username(username)
+                .username(registerRequest.getUsername())
                 .password(hashPassword)
-                .email(email)
+                .email(registerRequest.getEmail())
+                .phonenumber(registerRequest.getPhoneNumber())
                 .gender(0)
                 .isNotifi(0)
                 .role(Category.Role.USER)
                 .build();
         User newUser=userRepository.save(user);
-        initCart(newUser);
         return this.convertToView(newUser);
     }
-    public UserView getUserInfo(String username){
+    public CommonRes getUserInfo(String username){
         User user=userRepository.findByUsername(username);
-        if(user==null)
-            throw new GeneralException(Constant.BAD_REQUEST,Category.ErrorCodeEnum.INVALID_PARAMETER.name(),"User is not exist");
-        return this.convertToView(user);
+        if(user==null) {
+            return new CommonRes<> (400,true,"User is not exist") ;
+        }
+        return new CommonRes<> (200,false,this.convertToView(user)) ;
+
     }
     public UserView login(String username,String password){
 
@@ -77,15 +81,10 @@ public class UserQueryService{
                 .build();
     }
 
-    private void initCart(User user){
-
-    }
 
     public List<UserView> getUser(String username){
         User user=userRepository.findByUsername(username);
         List<Long> ids=new ArrayList<>(){{add(user.getId());}};
-        if(user.getRole().name().equals("ADMIN"))
-              return  userRepository.findByIdNotIn(ids).stream().map(this::convertToView).collect(Collectors.toList());
-        return userRepository.findByRoleAndIdNotIn(Category.Role.ADMIN,ids).stream().map(user1 -> convertToView(user1)).collect(Collectors.toList());
+        return userRepository.findByRoleAndIdNotIn(Category.Role.ADMIN,ids).stream().map(e -> convertToView(e)).collect(Collectors.toList());
     }
 }

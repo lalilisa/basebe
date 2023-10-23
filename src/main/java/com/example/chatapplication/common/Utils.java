@@ -1,5 +1,6 @@
 package com.example.chatapplication.common;
 
+import com.example.chatapplication.dto.response.CommonRes;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Utils {
 
@@ -41,5 +43,24 @@ public class Utils {
     public static Map<String,String> toQueryMap(String target){
 
         return new HashMap<>();
+    }
+
+    public static <T> CommonRes<T> createSuccessResponse(T data){
+        CommonRes<T> commonRes = new CommonRes<>();
+        commonRes.setData(data);
+        commonRes.setStatusCode(200);
+        commonRes.setIsError(false);
+        return commonRes;
+    }
+
+    public static <T> CommonRes<T> createErrorResponse(Integer statusCode,String messageError){
+        CommonRes<T> commonRes = new CommonRes<>();
+        commonRes.setData(null);
+        commonRes.setStatusCode(statusCode);
+        commonRes.setIsError(true);
+        Map<String, Object> error = new HashMap<>();
+        error.put("error",messageError);
+        commonRes.setErrorMap(error);
+        return commonRes;
     }
 }

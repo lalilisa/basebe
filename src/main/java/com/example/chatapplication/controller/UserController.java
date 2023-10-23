@@ -3,6 +3,7 @@ package com.example.chatapplication.controller;
 
 import com.example.chatapplication.dto.request.ChangePassword;
 import com.example.chatapplication.dto.request.UpdateUser;
+import com.example.chatapplication.dto.response.CommonRes;
 import com.example.chatapplication.dto.response.ResponseMessage;
 import com.example.chatapplication.dto.view.UserView;
 import com.example.chatapplication.service.read.UserQueryService;
@@ -21,20 +22,23 @@ public class UserController {
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
     @GetMapping("user-info")
-    public UserView getUserInfo(Authentication authentication){
+    public ResponseEntity<?> getUserInfo(Authentication authentication){
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-        return userQueryService.getUserInfo(userDetails.getUsername());
+         CommonRes<?> commonRes = userQueryService.getUserInfo(userDetails.getUsername());
+         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
 
     @PutMapping("user-info")
-    public UserView updateUserInfo(Authentication authentication,@RequestBody UpdateUser user){
+    public ResponseEntity<?> updateUserInfo(Authentication authentication,@RequestBody UpdateUser user){
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-        return userCommandService.updateUser(userDetails.getUsername(),user);
+        CommonRes<?> commonRes = userCommandService.updateUser(userDetails.getUsername(),user);
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
     @PutMapping("change-password")
-    public ResponseMessage changePassword(Authentication authentication, @RequestBody ChangePassword changePassword){
+    public ResponseEntity<?> changePassword(Authentication authentication, @RequestBody ChangePassword changePassword){
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();
-        return userCommandService.changePassword(userDetails.getUsername(),changePassword);
+        CommonRes<?> commonRes = userCommandService.changePassword(userDetails.getUsername(),changePassword);
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
 
     @GetMapping("list-user")

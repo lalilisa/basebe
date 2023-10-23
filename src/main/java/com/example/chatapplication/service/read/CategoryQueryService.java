@@ -15,7 +15,6 @@ public class CategoryQueryService {
     private final CategoryRepository categoryRepository;
 
     public List<Category> categories(){
-
-        return  categoryRepository.findAll(Sort.by(Sort.DEFAULT_DIRECTION,"id"));
+        return  categoryRepository.findByActiveOrderByName(1);
     }
 }

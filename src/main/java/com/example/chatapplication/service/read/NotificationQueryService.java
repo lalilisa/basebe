@@ -1,8 +1,10 @@
 package com.example.chatapplication.service.read;
 
 import com.example.chatapplication.common.Category;
+import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.Notifications;
 import com.example.chatapplication.domain.User;
+import com.example.chatapplication.dto.response.CommonRes;
 import com.example.chatapplication.exception.GeneralException;
 import com.example.chatapplication.repository.NotificationsRepository;
 import com.example.chatapplication.repository.UserRepository;
@@ -25,11 +27,12 @@ public class NotificationQueryService {
 
 
 
-    public List<Notifications> myNotifi(String username){
+    public CommonRes<?> myNotifi(String username){
         User user=userRepository.findByUsername(username);
         if(user==null)
-            throw new GeneralException(Category.ErrorCodeEnum.INVALID_PARAMETER.name(),"User is not exist");
-       return notificationsRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+//            throw new GeneralException(Category.ErrorCodeEnum.INVALID_PARAMETER.name(),"User is not exist");
+            return Utils.createErrorResponse(400,"User is not exist");
+       return Utils.createSuccessResponse(notificationsRepository.findByUserIdOrderByCreatedAtDesc(user.getId()));
     }
 
     /*@Scheduled(cron = "")

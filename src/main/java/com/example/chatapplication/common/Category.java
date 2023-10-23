@@ -33,7 +33,9 @@ public enum Category {
         INTERNAL_SERVER_ERROR,
         URI_NOT_FOUND,
         INVALID_PARAMETER,
-        INVALID_FORMAT;
+        INVALID_FORMAT,
+
+        PASSWORD_IS_INCORRECT;
 
         private ErrorCodeEnum() {
         }
