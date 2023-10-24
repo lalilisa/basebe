@@ -108,9 +108,8 @@ public class AuthController {
     private final JavaMailSender javaMailSender;
 
     @PostMapping("forget-password")
-    public ResponseEntity<?> forgetPassword(@RequestParam("email") String email) throws IOException, WriterException, MessagingException {
+    public ResponseEntity<?> forgetPassword(@RequestParam("email") String email) throws MessagingException  {
         User user = userRepository.findByEmail(email);
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String newPass = autogenPassword();
         user.setPassword(hashPassword("trimai"));
         userRepository.save(user);

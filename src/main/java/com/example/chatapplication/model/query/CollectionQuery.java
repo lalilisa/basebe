@@ -4,7 +4,7 @@ import com.example.chatapplication.model.pageable.DefaultOffsetPageable;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 public class CollectionQuery extends DefaultOffsetPageable {
 

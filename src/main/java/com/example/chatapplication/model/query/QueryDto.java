@@ -37,11 +37,11 @@ public class QueryDto {
 
     //Chuyển filter thành Map
 
-    private Map<String,Object> filters;
+    private Map<String, Object> filters;
 
     //convert string filter sang json
     public void setFilters() throws JsonProcessingException {
-        if(this.filter!=null && this.filter.length()>0) {
+        if (this.filter != null && this.filter.length() > 0) {
             ObjectMapper objectMapper = new ObjectMapper();
             System.out.println(filter);
             this.filters = objectMapper.readValue(filter, Map.class);
