@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MoviesQuery extends DefaultOffsetPageable {
+public class MoviesFilterQuery extends DefaultOffsetPageable {
 
     private String category;
     private String moviesType;

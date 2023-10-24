@@ -2,7 +2,7 @@ package com.example.chatapplication.controller;
 
 
 import com.example.chatapplication.common.Utils;
-import com.example.chatapplication.model.request.Notice;
+import com.example.chatapplication.model.command.Notice;
 import com.example.chatapplication.service.write.FireBaseNotifiCommandService;
 import com.example.chatapplication.socket.module.ChatModule;
 import com.google.zxing.WriterException;

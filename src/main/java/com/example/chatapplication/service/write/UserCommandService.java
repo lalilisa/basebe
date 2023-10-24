@@ -2,8 +2,8 @@ package com.example.chatapplication.service.write;
 
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.User;
-import com.example.chatapplication.model.request.ChangePassword;
-import com.example.chatapplication.model.request.UpdateUser;
+import com.example.chatapplication.model.command.ChangePassword;
+import com.example.chatapplication.model.command.UpdateUser;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.response.ResponseMessage;
 import com.example.chatapplication.model.view.UserView;

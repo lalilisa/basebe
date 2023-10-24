@@ -1,6 +1,6 @@
 package com.example.chatapplication.controller;
 
-import com.example.chatapplication.model.query.MoviesQuery;
+import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.service.read.MoviesQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class MoviesController {
 
     private final MoviesQueryService moviesQueryService;
     @GetMapping()
-    public ResponseEntity<?> getMovies(MoviesQuery query){
+    public ResponseEntity<?> getMovies(MoviesFilterQuery query){
         return ResponseEntity.ok(moviesQueryService.findMovies(query));
     }
 

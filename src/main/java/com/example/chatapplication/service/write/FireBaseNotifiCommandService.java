@@ -1,6 +1,6 @@
 package com.example.chatapplication.service.write;
 
-import com.example.chatapplication.model.request.Notice;
+import com.example.chatapplication.model.command.Notice;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

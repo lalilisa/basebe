@@ -5,7 +5,7 @@ import com.example.chatapplication.common.BeanUtil;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.Category;
 import com.example.chatapplication.domain.Movies;
-import com.example.chatapplication.model.query.MoviesQuery;
+import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.model.query.QueryDto;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.response.ResponseListAll;
@@ -15,7 +15,6 @@ import com.example.chatapplication.repository.CategoryRepository;
 import com.example.chatapplication.repository.MoviesRepository;
 import com.example.chatapplication.service.impl.AbstractJpaDAO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
     }
 
 
-    public CommonRes<?> findMovies(MoviesQuery query) {
+    public CommonRes<?> findMovies(MoviesFilterQuery query) {
 //        moviesRepository.
         Integer year = null;
         if (query.getYear() != null) {

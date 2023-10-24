@@ -1,5 +1,4 @@
-package com.example.chatapplication.model.request;
-
+package com.example.chatapplication.model.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class FCMToken {
-    private String token;
+public class OtpVerifi {
+
+    private String transactionId;
+    private String otp;
 }

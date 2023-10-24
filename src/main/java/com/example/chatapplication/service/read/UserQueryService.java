@@ -5,7 +5,7 @@ import com.example.chatapplication.common.Category;
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.User;
-import com.example.chatapplication.model.request.RegisterRequest;
+import com.example.chatapplication.model.command.RegisterRequest;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.view.UserView;
 import com.example.chatapplication.exception.GeneralException;

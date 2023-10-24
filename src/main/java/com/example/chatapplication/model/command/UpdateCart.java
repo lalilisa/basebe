@@ -1,4 +1,4 @@
-package com.example.chatapplication.model.request;
+package com.example.chatapplication.model.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
-public class OtpVerifi {
-
-    private String transactionId;
-    private String otp;
+@Builder
+public class UpdateCart {
+    private Long productId;
+    private Integer quantity;
 }

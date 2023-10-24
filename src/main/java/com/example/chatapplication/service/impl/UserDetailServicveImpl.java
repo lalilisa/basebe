@@ -1,5 +1,6 @@
 package com.example.chatapplication.service.impl;
 
+import com.example.chatapplication.model.springsecurity.UserSercurity;
 import com.example.chatapplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,6 @@ public class UserDetailServicveImpl implements UserDetailsService {
         com.example.chatapplication.domain.User user=userRepository.findByUsername(username);
         List<GrantedAuthority> authorities=new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),authorities);
+        return new UserSercurity(user.getId(),user.getUsername(),user.getPassword(),authorities);
     }
 }

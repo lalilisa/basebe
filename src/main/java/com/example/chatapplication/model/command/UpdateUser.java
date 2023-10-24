@@ -1,4 +1,4 @@
-package com.example.chatapplication.model.request;
+package com.example.chatapplication.model.command;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
