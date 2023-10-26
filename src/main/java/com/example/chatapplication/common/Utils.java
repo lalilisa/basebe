@@ -23,32 +23,32 @@ import java.util.Map;
 
 public class Utils {
 
-    public static String hashPassword(String plainText){
-        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+    public static String hashPassword(String plainText) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(plainText);
     }
 
     public static byte[] genQrCode(String rawText) throws WriterException, IOException {
         String hasToken = DatatypeConverter.printBase64Binary(rawText.getBytes());
         QRCodeWriter barcodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = barcodeWriter.encode(hasToken, BarcodeFormat.QR_CODE,350, 350);
-        BufferedImage bufferedImage= MatrixToImageWriter.toBufferedImage(bitMatrix);
+        BitMatrix bitMatrix = barcodeWriter.encode(hasToken, BarcodeFormat.QR_CODE, 350, 350);
+        BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", baos);
         return baos.toByteArray();
     }
 
-    public static String decodeBase64(String hash){
+    public static String decodeBase64(String hash) {
         byte[] result = DatatypeConverter.parseBase64Binary(hash);
         return new String(result);
     }
 
-    public static Map<String,String> toQueryMap(String target){
+    public static Map<String, String> toQueryMap(String target) {
 
         return new HashMap<>();
     }
 
-    public static <T> CommonRes<T> createSuccessResponse(T data){
+    public static <T> CommonRes<T> createSuccessResponse(T data) {
         CommonRes<T> commonRes = new CommonRes<>();
         commonRes.setData(data);
         commonRes.setStatusCode(200);
@@ -56,13 +56,25 @@ public class Utils {
         return commonRes;
     }
 
-    public static <T> CommonRes<T> createErrorResponse(Integer statusCode,String messageError){
+    public static <T> CommonRes<T> createErrorResponse(Integer statusCode, String messageError) {
         CommonRes<T> commonRes = new CommonRes<>();
         commonRes.setData(null);
         commonRes.setStatusCode(statusCode);
         commonRes.setIsError(true);
         Map<String, Object> error = new HashMap<>();
-        error.put("error",messageError);
+        error.put("error", messageError);
+        commonRes.setErrorMap(error);
+        return commonRes;
+    }
+
+    public static <T> CommonRes<T> createErrorResponse(Integer statusCode, String errorCode, String messageError) {
+        CommonRes<T> commonRes = new CommonRes<>();
+        commonRes.setData(null);
+        commonRes.setStatusCode(statusCode);
+        commonRes.setIsError(true);
+        Map<String, Object> error = new HashMap<>();
+        error.put("errorCode", errorCode);
+        error.put("message", messageError);
         commonRes.setErrorMap(error);
         return commonRes;
     }

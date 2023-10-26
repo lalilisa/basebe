@@ -8,6 +8,7 @@ import com.example.chatapplication.model.command.LoginRequest;
 import com.example.chatapplication.model.command.OtpVerifi;
 import com.example.chatapplication.model.command.PhonenumberRequest;
 import com.example.chatapplication.model.command.RegisterRequest;
+import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.response.LoginResponse;
 import com.example.chatapplication.model.response.QrLogin;
 import com.example.chatapplication.model.response.ResponseMessage;
@@ -53,7 +54,8 @@ public class AuthController {
     private final OtpCommandService otpCommandService;
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestHeader("deviceUUID") String fcmToken,@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestHeader(value = "deviceUUID",required = false) String fcmToken,@RequestBody LoginRequest loginRequest) {
+        System.out.println(loginRequest);
         UserView user = userQueryService.login(loginRequest.getUsername(), loginRequest.getPassword(),fcmToken);
         Date expireAccess = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 1000);
         Date expireRefresh = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 10000);
@@ -71,8 +73,10 @@ public class AuthController {
 
     @PostMapping("register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        UserView user = userQueryService.createUser(registerRequest);
-        return ResponseEntity.ok(user);
+        System.out.println(registerRequest);
+        CommonRes<?> res = userQueryService.createUser(registerRequest);
+        System.out.println(res);
+        return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 
     @PostMapping("send-otp")

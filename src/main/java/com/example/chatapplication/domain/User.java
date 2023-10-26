@@ -24,7 +24,7 @@ public class User extends Audiant{
     @Column(unique = true,nullable = false,name = "username")
     private String username;
 
-    @Column(unique = true,nullable = false,name = "email")
+    @Column(unique = true,nullable = true,name = "email")
     private String email;
 
     @Column(unique = true,name = "phonenumber")

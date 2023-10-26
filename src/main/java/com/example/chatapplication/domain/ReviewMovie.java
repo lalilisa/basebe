@@ -27,4 +27,8 @@ public class ReviewMovie extends Audiant{
 
     @Column(name = "content")
     private String content;
+
+    @Column(name = "parrent_id")
+    private Long parrentId;
+
 }

@@ -26,22 +26,23 @@ public class UserQueryService {
     private final UserRepository userRepository;
 
 
-    public UserView createUser(RegisterRequest registerRequest) {
+    public CommonRes<?> createUser(RegisterRequest registerRequest) {
         User existedUser = userRepository.findByEmailOrUsernameOrPhonenumber(registerRequest.getEmail(), registerRequest.getUsername(), registerRequest.getPhoneNumber());
         if (existedUser != null)
-            throw new GeneralException(Constant.BAD_REQUEST, Category.ErrorCodeEnum.INVALID_PARAMETER.name(), "Username and email is not exist");
+                return Utils.createErrorResponse(400,"E0001","Username and email is exist");
         String hashPassword = Utils.hashPassword(registerRequest.getPassword());
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .password(hashPassword)
                 .email(registerRequest.getEmail())
                 .phonenumber(registerRequest.getPhoneNumber())
+                .fullname(registerRequest.getFullName())
                 .gender(0)
                 .isNotifi(0)
                 .role(Category.Role.USER)
                 .build();
         User newUser = userRepository.save(user);
-        return this.convertToView(newUser);
+        return Utils.createSuccessResponse(this.convertToView(newUser));
     }
 
     public CommonRes getUserInfo(String username) {
