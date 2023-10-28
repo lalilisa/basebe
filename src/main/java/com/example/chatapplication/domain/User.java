@@ -56,4 +56,7 @@ public class User extends Audiant{
 
     @Column(name = "last_device_uuid")
     private String deviceUUID;
+
+    @Column(name = "avatar")
+    private String avatar;
 }

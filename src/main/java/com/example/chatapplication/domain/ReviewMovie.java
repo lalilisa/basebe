@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,16 +16,23 @@ import javax.persistence.Table;
 @Table(name = "review_movie")
 public class ReviewMovie extends Audiant{
 
-    @EmbeddedId
-    private UserMoviesKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "rate")
-    private Integer rate;
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(name = "movie_id")
+    private Long movieId;
 
     @Column(name = "content")
     private String content;
 
     @Column(name = "parrent_id")
     private Long parrentId;
+
+    @Column(name = "children_count")
+    private Integer childrenCount;
 
 }
