@@ -10,6 +10,7 @@ import com.example.chatapplication.model.springsecurity.UserSercurity;
 import com.example.chatapplication.service.read.ReviewQueryService;
 import com.example.chatapplication.service.write.ReviewCommandService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/review")
+@Slf4j
 public class ReviewController {
 
     private final ReviewCommandService reviewCommandService;
@@ -29,6 +31,7 @@ public class ReviewController {
         Optional<UserSercurity> userSercurity = Optional.ofNullable(authentication)
                 .map(e -> (UserSercurity) authentication.getPrincipal())
                 .stream().findFirst();
+        log.warn("API GET COMMENT");
         CommonRes<?> res = reviewQueryService.findReviewMovies(query, userSercurity.isEmpty() ? null : userSercurity.get().getUserId());
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }

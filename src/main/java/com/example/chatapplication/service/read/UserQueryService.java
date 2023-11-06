@@ -27,8 +27,9 @@ public class UserQueryService {
 
 
     public CommonRes<?> createUser(RegisterRequest registerRequest) {
-        User existedUser = userRepository.findByEmailOrUsernameOrPhonenumber(registerRequest.getEmail(), registerRequest.getUsername(), registerRequest.getPhoneNumber());
-        if (existedUser != null)
+        List<User> existedUser = userRepository.findByEmailOrUsernameOrPhonenumber(registerRequest.getEmail(), registerRequest.getUsername(), registerRequest.getPhoneNumber());
+        System.out.println(existedUser);
+        if (!existedUser.isEmpty())
                 return Utils.createErrorResponse(400,"E0001","Username and email is exist");
         String hashPassword = Utils.hashPassword(registerRequest.getPassword());
         User user = User.builder()

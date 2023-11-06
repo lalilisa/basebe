@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     User findByUsername(String username);
     User findByEmail(String email);
 
-    User findByEmailOrUsernameOrPhonenumber(String email,String username,String phoneNumber);
+    List<User> findByEmailOrUsernameOrPhonenumber(String email,String username,String phoneNumber);
 
     User findByPhonenumber(String phonenumber);
 

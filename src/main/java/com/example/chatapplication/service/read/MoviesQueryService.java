@@ -5,18 +5,21 @@ import com.example.chatapplication.common.BeanUtil;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.Category;
 import com.example.chatapplication.domain.Movies;
+import com.example.chatapplication.model.pageable.OffsetPageable;
 import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.model.query.QueryDto;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.response.ResponseListAll;
 import com.example.chatapplication.model.view.CategoryView;
 import com.example.chatapplication.model.view.MovieView;
+import com.example.chatapplication.model.view.MoviesHomeView;
 import com.example.chatapplication.repository.CategoryRepository;
 import com.example.chatapplication.repository.MoviesRepository;
 import com.example.chatapplication.service.impl.AbstractJpaDAO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -77,27 +80,49 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
     }
 
 
-    public CommonRes<?> findDetailMovie(Long id){
+    public CommonRes<?> findDetailMovie(Long id) {
         Optional<Movies> moviesOptional = moviesRepository.findById(id);
         List<Category> categories = categoryRepository.findByMovieId(id);
-        return Utils.createSuccessResponse(convertToView(moviesOptional.isEmpty() ? new Movies() : moviesOptional.get(),categories));
+        if (moviesOptional.isPresent()) {
+            Movies movies = moviesOptional.get();
+            movies.setView(movies.getView() == null ? 1 : movies.getView() + 1);
+            moviesRepository.save(movies);
+        }
+        return Utils.createSuccessResponse(convertToView(moviesOptional.isEmpty() ? new Movies() : moviesOptional.get(), categories));
     }
+
     private MovieView convertToView(Movies movies, List<Category> categories) {
         MovieView movieView = new MovieView();
-        BeanUtil.copyProperties(movies, new MovieView(), true);
-        List<CategoryView> categoryViews = categories.stream().map(e->convertToCategoryView(e)).collect(Collectors.toList());
+        BeanUtil.copyProperties(movies, movieView, false);
+        List<CategoryView> categoryViews = categories.stream().map(e -> convertToCategoryView(e)).collect(Collectors.toList());
         movieView.setCategories(categoryViews);
         return movieView;
     }
 
-    private Optional<Category> findOneById(List<Category> categories, Long id) {
-        return categories.stream().filter(e -> id == e.getId()).findFirst();
-    }
-
-    private CategoryView convertToCategoryView(Category category){
+    private CategoryView convertToCategoryView(Category category) {
         return CategoryView.builder()
                 .code(category.getCode())
                 .name(category.getName())
                 .build();
+    }
+
+    public CommonRes<?> getMoviesHome() {
+        MoviesHomeView moviesHomeView = new MoviesHomeView();
+        List<Movies> anime = moviesRepository.findMoviesByCategoryCode("ANIME", 1, PageRequest.of(0,15)).getContent();
+        List<Movies> movie = moviesRepository.findMoviesByMoviesTypeAndActiveOrderByReleaseDateDesc(com.example.chatapplication.common.Category.MoviesType.MOVIES, 1);
+        List<Movies> series = moviesRepository.findMoviesByMoviesTypeAndActiveOrderByReleaseDateDesc(com.example.chatapplication.common.Category.MoviesType.SERIES, 1);
+        List<Movies> newest = moviesRepository.findMoviesByActiveOrderByRateDescReleaseDateDesc(1, PageRequest.of(0,15)).getContent();
+        moviesHomeView.setAnime(convertToListMoviewView(anime));
+        moviesHomeView.setSeries(convertToListMoviewView(series));
+        moviesHomeView.setMovies(convertToListMoviewView(movie));
+        moviesHomeView.setNewest(convertToListMoviewView(newest));
+        return Utils.createSuccessResponse(moviesHomeView);
+    }
+
+    private List<MovieView> convertToListMoviewView(List<Movies> movies) {
+        return movies.stream().map(e -> {
+            List<Category> categories = categoryRepository.findByMovieId(e.getId());
+            return convertToView(e, categories);
+        }).collect(Collectors.toList());
     }
 }

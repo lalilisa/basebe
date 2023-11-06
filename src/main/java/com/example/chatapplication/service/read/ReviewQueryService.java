@@ -36,6 +36,8 @@ public class ReviewQueryService {
                     .movieId(e.getMovieId())
                     .avatar(user != null ? user.getAvatar() : null)
                     .content(e.getContent())
+                    .children(e.getChildrenCount())
+                    .name(user.getNickName() == null ? user.getFullname() : user.getNickName())
                     .createdAt(e.getCreatedAt())
                     .byYourSelf(Objects.equals(e.getUserId(), userId))
                     .build();

@@ -17,7 +17,7 @@ public class UpdateUser {
 
     private String address;
     private String name;
-
+    private String nickName;
     @JsonFormat( pattern = "dd-MM-yyyy")
     private Date dob;
     private String email;

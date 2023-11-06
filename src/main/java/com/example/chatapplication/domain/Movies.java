@@ -45,14 +45,14 @@ public class Movies extends Audiant implements Serializable {
     private Double rate;
 
     @Column(name = "active")
-    private Boolean active;
+    private Integer active;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "release_date")
     private Date releaseDate;
 
-//    @Column(name = "name")
-//    private String name;
+    @Column(name = "view")
+    private Integer view;
 
 
 }

@@ -15,6 +15,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class User extends Audiant{
 
     @Id
@@ -43,6 +44,9 @@ public class User extends Audiant{
 
     @Column(name = "fullname")
     private String fullname;
+
+    @Column(name = "nick_name")
+    private String nickName;
 
     @Column(name = "gender",columnDefinition = "tinyint(1) DEFAULT '1'")
     private Integer gender;

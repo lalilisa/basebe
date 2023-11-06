@@ -20,8 +20,14 @@ public class MoviesController {
         return ResponseEntity.ok(moviesQueryService.findMovies(query));
     }
 
+    @GetMapping("/home")
+    public ResponseEntity<?> getHomeMovies(){
+        return ResponseEntity.ok(moviesQueryService.getMoviesHome());
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<?> getDetailMovies(@PathVariable("id") Long id){
+        System.out.println("DETAIL MOVIES");
         return ResponseEntity.ok(moviesQueryService.findDetailMovie(id));
     }
 }
