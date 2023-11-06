@@ -10,13 +10,16 @@ import java.util.Optional;
 
 
 @Repository
-public interface ReviewRepository extends JpaRepository<ReviewMovie,Long> {
+public interface ReviewRepository extends JpaRepository<ReviewMovie, Long> {
 
 
     @Query(value = "select rv from ReviewMovie rv where rv.movieId = :movieId and rv.parrentId is null")
     List<ReviewMovie> findReviewInMoview(Long movieId);
 
+    @Query(value = "select rv from ReviewMovie rv where  rv.parrentId = :parentId")
+    List<ReviewMovie> findReplyReviewInMoview(Long parentId);
+
     List<ReviewMovie> findReviewMovieByParrentId(Long parrentId);
 
-    Optional<ReviewMovie> findFirstByUserIdAndId(Long userid,Long reviewId);
+    Optional<ReviewMovie> findFirstByUserIdAndId(Long userid, Long reviewId);
 }

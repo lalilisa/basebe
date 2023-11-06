@@ -17,6 +17,7 @@ public class ReviewView {
     private Long movieId;
     private String name;
     private String avatar;
+    private Long parrentId;
     private String content;
     private Date createdAt;
     private Boolean byYourSelf;

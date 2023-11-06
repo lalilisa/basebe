@@ -74,7 +74,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                         "/api-docs",
                         "/api/v1/movies",
                         "/api/v1/movies/**",
-                        "/api/v1/review"
+                        "/api/v1/review",
+                        "/api/v1/review/reply"
                         )
                 .permitAll()
                 .anyRequest().authenticated().and()

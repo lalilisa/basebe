@@ -4,6 +4,7 @@ import com.example.chatapplication.model.command.CreateReviewCommand;
 import com.example.chatapplication.model.command.DeleteReviewCommand;
 import com.example.chatapplication.model.command.UpdateReviewCommand;
 import com.example.chatapplication.model.command.VoteMovieCommand;
+import com.example.chatapplication.model.query.CommentQuery;
 import com.example.chatapplication.model.query.MovieQuery;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.springsecurity.UserSercurity;
@@ -32,10 +33,20 @@ public class ReviewController {
                 .map(e -> (UserSercurity) authentication.getPrincipal())
                 .stream().findFirst();
         log.warn("API GET COMMENT");
+        System.out.println(userSercurity.get().getUserId());
         CommonRes<?> res = reviewQueryService.findReviewMovies(query, userSercurity.isEmpty() ? null : userSercurity.get().getUserId());
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 
+    @GetMapping("reply")
+    public ResponseEntity<?> getAllCommentInMovie(CommentQuery query, Authentication authentication) {
+        Optional<UserSercurity> userSercurity = Optional.ofNullable(authentication)
+                .map(e -> (UserSercurity) authentication.getPrincipal())
+                .stream().findFirst();
+        log.warn("API GET COMMENT");
+        CommonRes<?> res = reviewQueryService.findReplyReviewMovies(query, userSercurity.isEmpty() ? null : userSercurity.get().getUserId());
+        return ResponseEntity.status(res.getStatusCode()).body(res);
+    }
     @PostMapping("")
     public ResponseEntity<?> reviewInMovie(Authentication authentication, CreateReviewCommand command) {
         UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
