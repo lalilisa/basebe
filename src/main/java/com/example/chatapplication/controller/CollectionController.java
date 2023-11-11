@@ -28,14 +28,14 @@ public class CollectionController {
     }
 
     @PostMapping("/mine")
-    public ResponseEntity<?> addMyCollection(CreateCollectionCommand command, Authentication authentication) {
+    public ResponseEntity<?> addMyCollection(@RequestBody CreateCollectionCommand command, Authentication authentication) {
         UserSercurity userDetails = (UserSercurity) authentication.getPrincipal();
         CommonRes<?> res = collectionCommandService.addMovieToCollection(userDetails.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 
     @DeleteMapping("/mine")
-    public ResponseEntity<?> deleteMyCollection(DeleteCollectionCommand command, Authentication authentication) {
+    public ResponseEntity<?> deleteMyCollection(@RequestBody  DeleteCollectionCommand command, Authentication authentication) {
         UserSercurity userDetails = (UserSercurity) authentication.getPrincipal();
         CommonRes<?> res = collectionCommandService.removeMovieCollection(userDetails.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);

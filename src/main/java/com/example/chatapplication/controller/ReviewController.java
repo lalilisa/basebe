@@ -33,7 +33,6 @@ public class ReviewController {
                 .map(e -> (UserSercurity) authentication.getPrincipal())
                 .stream().findFirst();
         log.warn("API GET COMMENT");
-        System.out.println(userSercurity.get().getUserId());
         CommonRes<?> res = reviewQueryService.findReviewMovies(query, userSercurity.isEmpty() ? null : userSercurity.get().getUserId());
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
@@ -48,35 +47,35 @@ public class ReviewController {
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
     @PostMapping("")
-    public ResponseEntity<?> reviewInMovie(Authentication authentication, CreateReviewCommand command) {
+    public ResponseEntity<?> reviewInMovie(Authentication authentication,@RequestBody CreateReviewCommand command) {
         UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
         CommonRes<?> res = reviewCommandService.reviewMovie(userSercurity.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 
     @PutMapping("")
-    public ResponseEntity<?> editcomment(Authentication authentication, UpdateReviewCommand command) {
+    public ResponseEntity<?> editcomment(Authentication authentication,@RequestBody UpdateReviewCommand command) {
         UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
         CommonRes<?> res = reviewCommandService.updateReviewMovie(userSercurity.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 
     @PostMapping("reply")
-    public ResponseEntity<?> replyReview(Authentication authentication, CreateReviewCommand command) {
+    public ResponseEntity<?> replyReview(Authentication authentication,@RequestBody CreateReviewCommand command) {
         UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
         CommonRes<?> res = reviewCommandService.reply(userSercurity.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 
     @DeleteMapping("")
-    public ResponseEntity<?> deleteReview(Authentication authentication, DeleteReviewCommand command) {
+    public ResponseEntity<?> deleteReview(Authentication authentication,@RequestBody DeleteReviewCommand command) {
         UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
         CommonRes<?> res = reviewCommandService.deleteReviewMovie(userSercurity.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 
     @PostMapping("vote")
-    public ResponseEntity<?> voteMovies(Authentication authentication, VoteMovieCommand command) {
+    public ResponseEntity<?> voteMovies(Authentication authentication,@RequestBody VoteMovieCommand command) {
         UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
         CommonRes<?> res = reviewCommandService.voteMovie(userSercurity.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
