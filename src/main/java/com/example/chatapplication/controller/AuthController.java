@@ -54,9 +54,9 @@ public class AuthController {
     private final OtpCommandService otpCommandService;
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestHeader(value = "deviceUUID",required = false) String fcmToken,@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestHeader(value = "deviceUUID", required = false) String fcmToken, @RequestBody LoginRequest loginRequest) {
         System.out.println(loginRequest);
-        UserView user = userQueryService.login(loginRequest.getUsername(), loginRequest.getPassword(),fcmToken);
+        UserView user = userQueryService.login(loginRequest.getUsername(), loginRequest.getPassword(), fcmToken);
         Date expireAccess = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 1000);
         Date expireRefresh = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 10000);
         String accessToken = jwtTokenUtil.generateAccountToken(user, expireAccess);
@@ -64,6 +64,8 @@ public class AuthController {
         return ResponseEntity.ok(LoginResponse.builder()
                 .userId(user.getId())
                 .role(user.getRole())
+                .name(user.getFullname())
+                .avatar(user.getAvatar())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .expireAccressToken(expireAccess)
@@ -112,7 +114,7 @@ public class AuthController {
     private final JavaMailSender javaMailSender;
 
     @PostMapping("forget-password")
-    public ResponseEntity<?> forgetPassword(@RequestParam("email") String email) throws MessagingException  {
+    public ResponseEntity<?> forgetPassword(@RequestParam("email") String email) throws MessagingException {
         User user = userRepository.findByEmail(email);
         String newPass = autogenPassword();
         user.setPassword(hashPassword("trimai"));

@@ -12,6 +12,8 @@ import java.util.Date;
 @Setter
 public class LoginResponse {
     private Long userId;
+    private String name;
+    private String avatar;
     private Category.Role role;
     private String accessToken;
     private String refreshToken;

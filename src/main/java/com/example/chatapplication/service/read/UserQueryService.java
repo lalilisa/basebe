@@ -74,10 +74,11 @@ public class UserQueryService {
                 .dob(domain.getDob())
                 .address(domain.getAddress())
                 .email(domain.getEmail())
-                .fullname(domain.getFullname())
+                .fullname(domain.getNickName() == null ? domain.getFullname() : domain.getNickName())
                 .username(domain.getUsername())
                 .phonnumber(domain.getPhonenumber())
                 .role(domain.getRole())
+                .avatar(domain.getAvatar())
                 .gender(domain.getGender())
                 .isNotifi(domain.getIsNotifi())
                 .build();

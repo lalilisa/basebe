@@ -17,10 +17,10 @@ public class UserView {
     private Long id;
     private String username;
     private String email;
+    private String avatar;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dob;
     private String phonnumber;
-    private String password;
     private String address;
     private String fullname;
     private Integer gender;
