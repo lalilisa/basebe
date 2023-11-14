@@ -22,4 +22,8 @@ public interface ReviewRepository extends JpaRepository<ReviewMovie, Long> {
     List<ReviewMovie> findReviewMovieByParrentId(Long parrentId);
 
     Optional<ReviewMovie> findFirstByUserIdAndId(Long userid, Long reviewId);
+
+    List<ReviewMovie> findByParrentId(Long parentId);
+
+    Integer countByParrentId(Long reviewId);
 }

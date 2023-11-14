@@ -31,13 +31,14 @@ public class ReviewQueryService {
         List<User> users = userRepository.findAllById(userIds);
         List<ReviewView> reviewViews = reviewMovies.stream().map(e->{
             User user = users.stream().filter(u->u.getId().equals(e.getUserId())).findFirst().orElse(null);
+            Integer  childrentCount = reviewRepository.countByParrentId(e.getId());
             return ReviewView.builder()
                     .reviewId(e.getId())
-                    .userid(e.getUserId())
+                    .userId(e.getUserId())
                     .movieId(e.getMovieId())
                     .avatar(user != null ? user.getAvatar() : null)
                     .content(e.getContent())
-                    .children(e.getChildrenCount())
+                    .children(childrentCount)
                     .name(user.getNickName() == null ? user.getFullname() : user.getNickName())
                     .parrentId(e.getParrentId())
                     .createdAt(e.getCreatedAt())
@@ -53,13 +54,14 @@ public class ReviewQueryService {
         List<User> users = userRepository.findAllById(userIds);
         List<ReviewView> reviewViews = reviewMovies.stream().map(e->{
             User user = users.stream().filter(u->u.getId().equals(e.getUserId())).findFirst().orElse(null);
+            Integer  childrentCount = reviewRepository.countByParrentId(e.getId());
             return ReviewView.builder()
                     .reviewId(e.getId())
-                    .userid(e.getUserId())
+                    .userId(e.getUserId())
                     .movieId(e.getMovieId())
                     .avatar(user != null ? user.getAvatar() : null)
                     .content(e.getContent())
-                    .children(e.getChildrenCount())
+                    .children(childrentCount)
                     .name(user.getNickName() == null ? user.getFullname() : user.getNickName())
                     .parrentId(e.getParrentId())
                     .createdAt(e.getCreatedAt())

@@ -19,7 +19,7 @@ public class MovieView {
     private Long id;
     private String code;
     private String name;
-    private String descption;
+    private String description;
     private Category.MoviesType moviesType;
     private String duration;
     private String thumnail;
