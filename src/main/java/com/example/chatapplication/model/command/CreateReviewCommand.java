@@ -1,15 +1,15 @@
 package com.example.chatapplication.model.command;
 
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Setter
 @Getter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateReviewCommand {
     private Long moviesId;
     private String content;
-    private Long parrentId;
+    private Long parentId;
 }

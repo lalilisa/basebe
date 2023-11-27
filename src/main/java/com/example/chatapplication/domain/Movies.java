@@ -28,8 +28,8 @@ public class Movies extends Audiant implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "descption")
-    private String descption;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "type" )
 //    @Enumerated(EnumType.STRING)

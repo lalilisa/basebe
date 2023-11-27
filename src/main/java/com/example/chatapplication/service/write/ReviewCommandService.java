@@ -2,27 +2,34 @@ package com.example.chatapplication.service.write;
 
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.domain.ReviewMovie;
+import com.example.chatapplication.domain.User;
 import com.example.chatapplication.domain.UserVote;
 import com.example.chatapplication.domain.compositekey.UserMoviesKey;
 import com.example.chatapplication.model.command.CreateReviewCommand;
 import com.example.chatapplication.model.command.DeleteReviewCommand;
 import com.example.chatapplication.model.command.UpdateReviewCommand;
 import com.example.chatapplication.model.command.VoteMovieCommand;
+import com.example.chatapplication.model.query.CommentQuery;
 import com.example.chatapplication.model.response.CommonRes;
+import com.example.chatapplication.model.view.ReviewView;
 import com.example.chatapplication.repository.ReviewRepository;
+import com.example.chatapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
 public class ReviewCommandService {
         private final ReviewRepository reviewRepository;
-
+        private final UserRepository userRepository;
         public CommonRes<?> reviewMovie(Long userId , CreateReviewCommand command){
+                System.out.println(command);
                 ReviewMovie movie = ReviewMovie.builder()
                         .movieId(command.getMoviesId())
                         .content(command.getContent())
@@ -30,11 +37,12 @@ public class ReviewCommandService {
                         .parrentId(null)
                         .childrenCount(0)
                         .build();
-                reviewRepository.save(movie);
-                return Utils.createSuccessResponse("SUCCESS");
+                User user =userRepository.findById(userId).orElse(null);
+                return Utils.createSuccessResponse(convertToView(user,reviewRepository.save(movie)));
         }
 
         public CommonRes<?> updateReviewMovie(Long userId , UpdateReviewCommand command){
+                System.out.println(userId);
                 Optional<ReviewMovie> reviewMovieOptional = reviewRepository.findFirstByUserIdAndId(userId,command.getReviewId());
                 if(reviewMovieOptional.isEmpty())
                         return Utils.createErrorResponse(400,"RV0001","Đánh giá không tồn tại");
@@ -46,27 +54,29 @@ public class ReviewCommandService {
 
         public CommonRes<?> deleteReviewMovie(Long userId , DeleteReviewCommand command){
                 Optional<ReviewMovie> reviewMovieOptional = reviewRepository.findFirstByUserIdAndId(userId,command.getReviewId());
+                List<ReviewMovie> childrenReview = reviewRepository.findReviewMovieByParrentId(command.getReviewId());
                 if(reviewMovieOptional.isEmpty())
                         return Utils.createErrorResponse(400,"RV0001","Đánh giá không tồn tại");
                 reviewRepository.delete(reviewMovieOptional.get());
+                reviewRepository.deleteAll(childrenReview);
                 return Utils.createSuccessResponse("SUCCESS");
         }
 
         public CommonRes<?> reply(Long userId , CreateReviewCommand command){
-                Optional<ReviewMovie> reviewMovieOptional = reviewRepository.findById(command.getParrentId());
+                Optional<ReviewMovie> reviewMovieOptional = reviewRepository.findById(command.getParentId());
                 if(reviewMovieOptional.isEmpty())
                         return Utils.createErrorResponse(400,"RV0001","Đánh giá không tồn tại");
+                User user =userRepository.findById(userId).orElse(null);
                 ReviewMovie parrentReview = reviewMovieOptional.get();
                 parrentReview.setChildrenCount(parrentReview.getChildrenCount() == null ? 1 : parrentReview.getChildrenCount() +1);
                 ReviewMovie movie = ReviewMovie.builder()
                         .movieId(command.getMoviesId())
                         .content(command.getContent())
                         .userId(userId)
-                        .parrentId(command.getParrentId())
+                        .parrentId(command.getParentId())
                         .childrenCount(0)
                         .build();
-                reviewRepository.save(movie);
-                return Utils.createSuccessResponse("SUCCESS");
+                return Utils.createSuccessResponse(convertToView(user,reviewRepository.save(movie)));
         }
 
         public CommonRes<?> voteMovie(Long userId , VoteMovieCommand command){
@@ -74,5 +84,20 @@ public class ReviewCommandService {
                 userVote.setVote(command.getVote());
                 userVote.setId(new UserMoviesKey(userId,command.getMovieId()));
                 return Utils.createSuccessResponse("SUCCESS");
+        }
+
+        private ReviewView convertToView(User user,ReviewMovie e){
+                return ReviewView.builder()
+                        .reviewId(e.getId())
+                        .userId(e.getUserId())
+                        .movieId(e.getMovieId())
+                        .avatar(user != null ? user.getAvatar() : null)
+                        .content(e.getContent())
+                        .children(e.getChildrenCount())
+                        .name(user.getNickName() == null ? user.getFullname() : user.getNickName())
+                        .parrentId(e.getParrentId())
+                        .createdAt(e.getCreatedAt())
+                        .byYourSelf(e.getUserId().equals(user.getId()))
+                        .build();
         }
 }

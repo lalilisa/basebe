@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class ReviewView {
 
-    private Long userid;
+    private Long userId;
     private Long reviewId;
     private Long movieId;
     private String name;
