@@ -10,7 +10,7 @@ import java.util.Map;
 @Service
 public class CloudinaryService {
 
-    private CloudinaryConfig cloudinaryConfig;
+    private final CloudinaryConfig cloudinaryConfig;
 
     public CloudinaryService(CloudinaryConfig cloudinaryConfig) {
         this.cloudinaryConfig = cloudinaryConfig;

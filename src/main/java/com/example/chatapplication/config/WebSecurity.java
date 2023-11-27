@@ -83,7 +83,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                         "api/v1/package"
                         )
                 .permitAll()
-//                .antMatchers( HttpMethod.PUT,"/api/v1/category/**").permitAll()
+                .antMatchers( HttpMethod.POST,"/test/file").permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 

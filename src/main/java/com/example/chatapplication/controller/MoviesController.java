@@ -1,5 +1,6 @@
 package com.example.chatapplication.controller;
 
+import com.example.chatapplication.anotation.IsAdmin;
 import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.service.read.MoviesQueryService;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +34,21 @@ public class MoviesController {
 
 
     @PostMapping("")
-    public ResponseEntity<?> getDetailMoviess(){
+    @IsAdmin
+    public ResponseEntity<?> createMovie(){
         System.out.println("DETAIL MOVIES");
         return ResponseEntity.ok("");
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateMovie(@PathVariable("id") Long id){
+    @IsAdmin
+    public ResponseEntity<?> updateMoive(){
         System.out.println("DETAIL MOVIES");
-        return ResponseEntity.ok(moviesQueryService.findDetailMovie(id));
+        return ResponseEntity.ok("");
     }
 
+
+    @IsAdmin
     @DeleteMapping("")
     public ResponseEntity<?> deleteMovie(@PathVariable("id") Long id){
         System.out.println("DETAIL MOVIES");
