@@ -1,6 +1,7 @@
 package com.example.chatapplication.controller;
 
 
+import com.example.chatapplication.anotation.IsAdmin;
 import com.example.chatapplication.model.command.ChangePassword;
 import com.example.chatapplication.model.command.UpdateUser;
 import com.example.chatapplication.model.response.CommonRes;
@@ -39,6 +40,8 @@ public class UserController {
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
 
+
+    @IsAdmin
     @GetMapping("list-user")
     public ResponseEntity<?> getUser(Authentication authentication){
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();

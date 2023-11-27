@@ -32,8 +32,8 @@ public class Movies extends Audiant implements Serializable {
     private String descption;
 
     @Column(name = "type" )
-    @Enumerated(EnumType.STRING)
-    private Category.MoviesType moviesType;
+//    @Enumerated(EnumType.STRING)
+    private String moviesType;
 
     @Column(name = "duration")
     private String duration;

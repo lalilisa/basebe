@@ -40,7 +40,7 @@ public class CollectionQueryService {
 
     private MovieView convertToView(Movies movies, List<Category> categories) {
         MovieView movieView = new MovieView();
-        BeanUtil.copyProperties(movies, new MovieView(), true);
+        BeanUtil.copyProperties(movies, movieView, true);
         List<CategoryView> categoryViews = categories.stream().map(e->convertToCategoryView(e)).collect(Collectors.toList());
         movieView.setCategories(categoryViews);
         return movieView;

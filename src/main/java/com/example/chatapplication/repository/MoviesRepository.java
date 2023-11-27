@@ -25,7 +25,7 @@ public interface MoviesRepository extends JpaRepository<Movies, Long> {
     Page<Movies> findCollectionByUsername(String username, Integer active, Pageable pageable);
 
 
-    List<Movies> findMoviesByMoviesTypeAndActiveOrderByReleaseDateDesc(Category.MoviesType type, Integer active);
+    List<Movies> findMoviesByMoviesTypeAndActiveOrderByReleaseDateDesc(String type, Integer active);
 
     Page<Movies> findMoviesByActiveOrderByRateDescReleaseDateDesc(Integer active,Pageable pageable);
 
@@ -34,5 +34,17 @@ public interface MoviesRepository extends JpaRepository<Movies, Long> {
             "inner join Category c on c.id = mc.id.categoryId " +
             "where m.active = :active and  c.code = :code")
     Page<Movies> findMoviesByCategoryCode(String code, Integer active, Pageable pageable);
+
+    @Query(value = "select  m from Movies m " +
+            "inner join MovieCategory mc on m.id = mc.id.movieId " +
+            "inner join Category c on c.id = mc.id.categoryId " +
+            "where m.active = :active and  c.code in :code and m.name like %:name% and  m.moviesType in :movieType group by  m.id")
+    Page<Movies> searchMovieWithCategory(List<String> code, Integer active,String name,List<String> movieType , Pageable pageable);
+
+    @Query(value = "select  m from Movies m " +
+            "inner join MovieCategory mc on m.id = mc.id.movieId " +
+            "inner join Category c on c.id = mc.id.categoryId " +
+            "where m.active = :active and  m.name like %:name% and  m.moviesType in :movieType group by  m.id")
+    Page<Movies> searchMovieWithNoCategory(Integer active,String name,List<String> movieType, Pageable pageable);
 }
 

@@ -11,7 +11,7 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category,Long> {
 
 
-    List<Category> findByActiveOrderByName(Integer satatus);
+    List<Category> findByActiveOrderByName(boolean satatus);
 
     @Query(value = "select c from Category c inner join MovieCategory mc on c.id = mc.id.categoryId where mc.id.movieId in (:ids) group by c.id")
     List<Category> findByMovieIds(List<Long> ids);

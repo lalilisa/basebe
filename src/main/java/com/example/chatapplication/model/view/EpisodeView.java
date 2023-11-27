@@ -5,13 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
-public class CategoryView {
-    private Long id;
-    private String code;
+@Builder
+public class EpisodeView {
+
+    private String src;
     private String name;
-    private boolean active;
+    private Date publicDate;
+    private Integer episode;
 }

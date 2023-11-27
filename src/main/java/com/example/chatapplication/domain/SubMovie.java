@@ -31,4 +31,10 @@ public class SubMovie extends Audiant{
 
     @Column(name = "movie_id")
     private Long movieId;
+
+    @Column(name = "episode")
+    private Integer episode;
+
+    @Column(name = "src")
+    private String src;
 }

@@ -75,9 +75,7 @@ public class AuthController {
 
     @PostMapping("register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        System.out.println(registerRequest);
         CommonRes<?> res = userQueryService.createUser(registerRequest);
-        System.out.println(res);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
 

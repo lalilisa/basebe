@@ -26,4 +26,6 @@ public class UserView {
     private Integer gender;
     private Category.Role role;
     private Integer isNotifi;
+    private String nickName;
+    private Date createdAt;
 }

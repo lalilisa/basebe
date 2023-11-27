@@ -30,6 +30,7 @@ public class UserCommandService {
         user.setEmail(userInfo.getEmail() != null ? userInfo.getEmail() : user.getEmail());
         user.setAddress(userInfo.getAddress() != null ? userInfo.getAddress() : user.getAddress());
         user.setPhonenumber(userInfo.getPhonenumber() != null ? userInfo.getPhonenumber() : user.getPhonenumber());
+        user.setNickName(userInfo.getNickName() != null ? userInfo.getNickName() : user.getNickName());
         return Utils.createSuccessResponse(this.convertToView(userRepository.save(user)));
     }
 

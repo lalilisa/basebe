@@ -27,7 +27,7 @@ public class Packages extends Audiant{
     private String name;
 
     @Column(name = "duration")
-    private Integer duration;
+    private String duration;
 
     @Column(name = "price")
     private Double price;

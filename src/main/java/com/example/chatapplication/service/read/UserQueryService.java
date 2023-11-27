@@ -4,11 +4,16 @@ package com.example.chatapplication.service.read;
 import com.example.chatapplication.common.Category;
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.common.Utils;
+import com.example.chatapplication.domain.OrderPackage;
+import com.example.chatapplication.domain.Packages;
 import com.example.chatapplication.domain.User;
+import com.example.chatapplication.domain.compositekey.OrderPackageKey;
 import com.example.chatapplication.model.command.RegisterRequest;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.view.UserView;
 import com.example.chatapplication.exception.GeneralException;
+import com.example.chatapplication.repository.OrderPackageRepository;
+import com.example.chatapplication.repository.PackageRepository;
 import com.example.chatapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -24,6 +30,7 @@ import java.util.stream.Collectors;
 public class UserQueryService {
 
     private final UserRepository userRepository;
+
 
 
     public CommonRes<?> createUser(RegisterRequest registerRequest) {
@@ -42,10 +49,17 @@ public class UserQueryService {
                 .isNotifi(0)
                 .role(Category.Role.USER)
                 .build();
+
         User newUser = userRepository.save(user);
+        Optional<Packages> packages = packageRepository.findByCodeAndActive("NORMAL",true);
+        if(packages.isPresent()){
+            OrderPackageKey orderPackageKey =new OrderPackageKey(newUser.getId(), packages.get().getId());
+            orderPackageRepository.save(new OrderPackage(orderPackageKey));
+        }
         return Utils.createSuccessResponse(this.convertToView(newUser));
     }
-
+    private final PackageRepository packageRepository;
+    private final OrderPackageRepository orderPackageRepository;
     public CommonRes getUserInfo(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -74,13 +88,15 @@ public class UserQueryService {
                 .dob(domain.getDob())
                 .address(domain.getAddress())
                 .email(domain.getEmail())
-                .fullname(domain.getNickName() == null ? domain.getFullname() : domain.getNickName())
+                .fullname(domain.getFullname())
                 .username(domain.getUsername())
                 .phonnumber(domain.getPhonenumber())
+                .nickName(domain.getNickName())
                 .role(domain.getRole())
                 .avatar(domain.getAvatar())
                 .gender(domain.getGender())
                 .isNotifi(domain.getIsNotifi())
+                .createdAt(domain.getCreatedAt())
                 .build();
     }
 
@@ -90,6 +106,6 @@ public class UserQueryService {
         List<Long> ids = new ArrayList<>() {{
             add(user.getId());
         }};
-        return userRepository.findByRoleAndIdNotIn(Category.Role.ADMIN, ids).stream().map(e -> convertToView(e)).collect(Collectors.toList());
+        return userRepository.findByRoleAndIdNotIn(Category.Role.USER, ids).stream().map(e -> convertToView(e)).collect(Collectors.toList());
     }
 }
