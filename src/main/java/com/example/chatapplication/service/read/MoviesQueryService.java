@@ -11,6 +11,7 @@ import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.model.query.QueryDto;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.response.ResponseListAll;
+import com.example.chatapplication.model.response.ResponseMessage;
 import com.example.chatapplication.model.view.CategoryView;
 import com.example.chatapplication.model.view.EpisodeView;
 import com.example.chatapplication.model.view.MovieView;
@@ -170,5 +171,15 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
 
     public List<Movies> getAllMovie(){
         return moviesRepository.findAll();
+    }
+
+    public CommonRes<?> deleteMovie(Long id) {
+        Optional<Movies> moviesOptional = moviesRepository.findById(id);
+        if (moviesOptional.isPresent()) {
+            moviesRepository.delete(moviesOptional.get());
+            return Utils.createSuccessResponse(ResponseMessage.builder().message("SUCCESS").build());
+        }
+        return Utils.createSuccessResponse(ResponseMessage.builder().message("FAIL").build());
+
     }
 }

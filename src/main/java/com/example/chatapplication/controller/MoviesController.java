@@ -31,6 +31,13 @@ public class MoviesController {
     public ResponseEntity<?> searchMovie(MoviesFilterQuery query){
         return ResponseEntity.ok(moviesQueryService.searchMovie(query));
     }
+
+
+    @IsAdmin
+    @GetMapping("/admin/all")
+    public ResponseEntity<?> getAllMovie(){
+        return ResponseEntity.ok(Utils.createSuccessResponse(moviesQueryService.getAllMovie()));
+    }
     @GetMapping("{id}")
     public ResponseEntity<?> getDetailMovies(@PathVariable("id") Long id){
         System.out.println("DETAIL MOVIES");
@@ -54,15 +61,11 @@ public class MoviesController {
 
 
     @IsAdmin
-    @DeleteMapping("")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteMovie(@PathVariable("id") Long id){
         System.out.println("DETAIL MOVIES");
-        return ResponseEntity.ok(moviesQueryService.findDetailMovie(id));
+        return ResponseEntity.ok(moviesQueryService.deleteMovie(id));
     }
 
-    @GetMapping("admin/all")
-    @IsAdmin
-    public ResponseEntity<?> getAllMovie(){
-        return ResponseEntity.ok(Utils.createSuccessResponse(moviesQueryService.getAllMovie()));
-    }
+
 }
