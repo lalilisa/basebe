@@ -4,12 +4,14 @@ package com.example.chatapplication.service.read;
 import com.example.chatapplication.common.Category;
 import com.example.chatapplication.common.Constant;
 import com.example.chatapplication.common.Utils;
+import com.example.chatapplication.config.CloudinaryService;
 import com.example.chatapplication.domain.OrderPackage;
 import com.example.chatapplication.domain.Packages;
 import com.example.chatapplication.domain.User;
 import com.example.chatapplication.domain.compositekey.OrderPackageKey;
 import com.example.chatapplication.model.command.RegisterRequest;
 import com.example.chatapplication.model.response.CommonRes;
+import com.example.chatapplication.model.response.ResponseMessage;
 import com.example.chatapplication.model.view.UserView;
 import com.example.chatapplication.exception.GeneralException;
 import com.example.chatapplication.repository.OrderPackageRepository;
@@ -18,6 +20,7 @@ import com.example.chatapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +35,11 @@ public class UserQueryService {
     private final UserRepository userRepository;
 
 
-
     public CommonRes<?> createUser(RegisterRequest registerRequest) {
         List<User> existedUser = userRepository.findByEmailOrUsernameOrPhonenumber(registerRequest.getEmail(), registerRequest.getUsername(), registerRequest.getPhoneNumber());
         System.out.println(existedUser);
         if (!existedUser.isEmpty())
-                return Utils.createErrorResponse(400,"E0001","Username and email is exist");
+            return Utils.createErrorResponse(400, "E0001", "Username and email is exist");
         String hashPassword = Utils.hashPassword(registerRequest.getPassword());
         User user = User.builder()
                 .username(registerRequest.getUsername())
@@ -51,15 +53,17 @@ public class UserQueryService {
                 .build();
 
         User newUser = userRepository.save(user);
-        Optional<Packages> packages = packageRepository.findByCodeAndActive("NORMAL",true);
-        if(packages.isPresent()){
-            OrderPackageKey orderPackageKey =new OrderPackageKey(newUser.getId(), packages.get().getId());
+        Optional<Packages> packages = packageRepository.findByCodeAndActive("NORMAL", true);
+        if (packages.isPresent()) {
+            OrderPackageKey orderPackageKey = new OrderPackageKey(newUser.getId(), packages.get().getId());
             orderPackageRepository.save(new OrderPackage(orderPackageKey));
         }
         return Utils.createSuccessResponse(this.convertToView(newUser));
     }
+
     private final PackageRepository packageRepository;
     private final OrderPackageRepository orderPackageRepository;
+
     public CommonRes getUserInfo(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -107,5 +111,19 @@ public class UserQueryService {
             add(user.getId());
         }};
         return userRepository.findByRoleAndIdNotIn(Category.Role.USER, ids).stream().map(e -> convertToView(e)).collect(Collectors.toList());
+    }
+
+    private final CloudinaryService cloudinaryService;
+
+    public CommonRes<?> uploadingAvatar(MultipartFile multipartFile, Long userId) {
+        String src = cloudinaryService.uploadURl(multipartFile);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()){
+            User user =userOptional.get();
+            user.setAvatar(src);
+            userRepository.save(user);
+            return Utils.createSuccessResponse(ResponseMessage.builder().message("SUCCESS").build());
+        }
+        return Utils.createSuccessResponse(ResponseMessage.builder().message("FAIL").build());
     }
 }
