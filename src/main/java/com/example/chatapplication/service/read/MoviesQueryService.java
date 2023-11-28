@@ -167,4 +167,8 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
         }
         return Utils.createSuccessResponse(convertToListMoviewView(movies.getContent()));
     }
+
+    public List<Movies> getAllMovie(){
+        return moviesRepository.findAll();
+    }
 }
