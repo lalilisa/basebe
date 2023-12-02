@@ -1,6 +1,7 @@
 package com.example.chatapplication.service.write;
 
 import com.example.chatapplication.common.Utils;
+import com.example.chatapplication.config.CloudinaryService;
 import com.example.chatapplication.domain.User;
 import com.example.chatapplication.model.command.ChangePassword;
 import com.example.chatapplication.model.command.UpdateUser;
@@ -18,19 +19,24 @@ import org.springframework.stereotype.Service;
 public class UserCommandService {
 
     private final UserRepository userRepository;
-
+    private final CloudinaryService cloudinaryService;
 
     public CommonRes<?> updateUser(String username, UpdateUser userInfo) {
         User user = userRepository.findByUsername(username);
         if (user == null)
             // throw new GeneralException(Constant.BAD_REQUEST, Category.ErrorCodeEnum.INVALID_PARAMETER.name(), "User is not exist");
             return Utils.createErrorResponse(400, "User is not exist");
+        String urlAvatar = null;
+        System.out.println(userInfo);
+        if(userInfo.getAvatar() != null)
+            urlAvatar = cloudinaryService.uploadURl(userInfo.getAvatar());
         user.setFullname(userInfo.getName() != null ? userInfo.getName() : user.getFullname());
         user.setDob(userInfo.getDob() != null ? userInfo.getDob() : user.getDob());
         user.setEmail(userInfo.getEmail() != null ? userInfo.getEmail() : user.getEmail());
         user.setAddress(userInfo.getAddress() != null ? userInfo.getAddress() : user.getAddress());
         user.setPhonenumber(userInfo.getPhonenumber() != null ? userInfo.getPhonenumber() : user.getPhonenumber());
         user.setNickName(userInfo.getNickName() != null ? userInfo.getNickName() : user.getNickName());
+        user.setAvatar(urlAvatar == null ? user .getAvatar() : urlAvatar);
         return Utils.createSuccessResponse(this.convertToView(userRepository.save(user)));
     }
 

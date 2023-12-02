@@ -63,6 +63,7 @@ public class ReviewController {
     @PostMapping("reply")
     public ResponseEntity<?> replyReview(Authentication authentication,@RequestBody CreateReviewCommand command) {
         UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
+        System.out.println(command.getContent());
         CommonRes<?> res = reviewCommandService.reply(userSercurity.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
