@@ -17,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -86,9 +84,12 @@ public class ReviewCommandService {
             String name = user.getNickName() != null ? user.getNickName() : user.getFullname();
             String content = name + " đã phản hồi bình luận của bạn : " + command.getContent();
             String title = "BÌNH LUẬN";
+            Map<String,String> data = new HashMap<>();
+            data.put("navigation","Select");
             Notice notice = Notice.builder()
                     .subject(title)
                     .content(content)
+                    .data(data)
                     .registrationTokens(fcmToken)
                     .build();
             fireBaseNotifiCommandService.sendNotification(notice);

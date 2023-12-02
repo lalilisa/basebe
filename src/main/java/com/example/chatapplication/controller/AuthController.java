@@ -19,6 +19,7 @@ import com.example.chatapplication.service.write.OtpCommandService;
 import com.example.chatapplication.util.JwtTokenUtil;
 import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -42,6 +43,7 @@ import java.util.UUID;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @CrossOrigin
+@Slf4j
 public class AuthController {
 
     @Value("${HOST_PHONE}")
@@ -56,6 +58,7 @@ public class AuthController {
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestHeader(value = "deviceUUID", required = false) String fcmToken, @RequestBody LoginRequest loginRequest) {
         System.out.println(loginRequest);
+        log.warn("DEVICE UUID :{} ",fcmToken);
         UserView user = userQueryService.login(loginRequest.getUsername(), loginRequest.getPassword(), fcmToken);
         Date expireAccess = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 1000);
         Date expireRefresh = new Date(System.currentTimeMillis() + Constant.JWT_TOKEN_VALIDITY * 10000);
