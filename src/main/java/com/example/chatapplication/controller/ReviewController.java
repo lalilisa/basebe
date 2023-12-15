@@ -80,4 +80,11 @@ public class ReviewController {
         CommonRes<?> res = reviewCommandService.voteMovie(userSercurity.getUserId(), command);
         return ResponseEntity.status(res.getStatusCode()).body(res);
     }
+
+    @GetMapping("vote")
+    public ResponseEntity<?> getMyVoteMovies(Authentication authentication,@RequestParam("movieId") Long movieId) {
+        UserSercurity userSercurity = (UserSercurity) authentication.getPrincipal();
+        CommonRes<?> res = reviewCommandService.getMyVoteMovie(userSercurity.getUserId(), movieId);
+        return ResponseEntity.status(res.getStatusCode()).body(res);
+    }
 }

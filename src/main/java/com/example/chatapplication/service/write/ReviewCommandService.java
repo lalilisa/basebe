@@ -1,22 +1,19 @@
 package com.example.chatapplication.service.write;
 
 import com.example.chatapplication.common.Utils;
-import com.example.chatapplication.domain.Notifications;
-import com.example.chatapplication.domain.ReviewMovie;
-import com.example.chatapplication.domain.User;
-import com.example.chatapplication.domain.UserVote;
+import com.example.chatapplication.domain.*;
 import com.example.chatapplication.domain.compositekey.UserMoviesKey;
 import com.example.chatapplication.model.command.*;
 import com.example.chatapplication.model.query.CommentQuery;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.view.ReviewView;
-import com.example.chatapplication.repository.NotificationsRepository;
-import com.example.chatapplication.repository.ReviewRepository;
-import com.example.chatapplication.repository.UserRepository;
+import com.example.chatapplication.model.view.VoteMovieView;
+import com.example.chatapplication.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,8 +81,8 @@ public class ReviewCommandService {
             String name = user.getNickName() != null ? user.getNickName() : user.getFullname();
             String content = name + " đã phản hồi bình luận của bạn : " + command.getContent();
             String title = "BÌNH LUẬN";
-            Map<String,String> data = new HashMap<>();
-            data.put("navigation","Select");
+            Map<String, String> data = new HashMap<>();
+            data.put("navigation", "Select");
             Notice notice = Notice.builder()
                     .subject(title)
                     .content(content)
@@ -99,11 +96,29 @@ public class ReviewCommandService {
         return Utils.createSuccessResponse(convertToView(user, reviewRepository.save(movie)));
     }
 
+    private final UserVoteRepository userVoteRepository;
+    private static DecimalFormat format = new DecimalFormat("##.##");
+    private final MoviesRepository moviesRepository;
     public CommonRes<?> voteMovie(Long userId, VoteMovieCommand command) {
-        UserVote userVote = UserVote.builder().build();
-        userVote.setVote(command.getVote());
-        userVote.setId(new UserMoviesKey(userId, command.getMovieId()));
-        return Utils.createSuccessResponse("SUCCESS");
+        UserMoviesKey userMoviesKey = new UserMoviesKey(userId, command.getMovieId());
+        UserVote userVote = userVoteRepository.findById(userMoviesKey).orElse(null);
+        if (userVote != null) {
+            userVote.setVote(command.getVote());
+        } else {
+            userVote = UserVote.builder().build();
+            userVote.setVote(command.getVote());
+            userVote.setId(userMoviesKey);
+        }
+        userVoteRepository.save(userVote);
+        Integer sumStar = userVoteRepository.getSumStartVote(command.getMovieId());
+        Integer totalVote = userVoteRepository.countByMovieId(command.getMovieId());
+        Double rate = Double.parseDouble(format.format(sumStar/totalVote));
+        Movies movies= moviesRepository.findById(command.getMovieId()).orElse(null);
+        if(movies != null){
+            movies.setRate(rate);
+            moviesRepository.save(movies);
+        }
+        return Utils.createSuccessResponse(VoteMovieView.builder().rate(rate).build());
     }
 
     private ReviewView convertToView(User user, ReviewMovie e) {
@@ -119,5 +134,17 @@ public class ReviewCommandService {
                 .createdAt(e.getCreatedAt())
                 .byYourSelf(e.getUserId().equals(user.getId()))
                 .build();
+    }
+
+    public CommonRes<?> getMyVoteMovie(Long userId, Long movieId) {
+        UserMoviesKey userMoviesKey = new UserMoviesKey(userId, movieId);
+        UserVote userVote = userVoteRepository.findById(userMoviesKey).orElse(null);
+        Integer vote = 0;
+        if (userVote != null) {
+           vote = userVote.getVote();
+        }
+        Map<String,Object> res =new HashMap<>();
+        res.put("vote",vote);
+        return Utils.createSuccessResponse(res);
     }
 }

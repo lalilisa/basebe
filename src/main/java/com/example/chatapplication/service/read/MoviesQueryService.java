@@ -3,22 +3,15 @@ package com.example.chatapplication.service.read;
 
 import com.example.chatapplication.common.BeanUtil;
 import com.example.chatapplication.common.Utils;
-import com.example.chatapplication.domain.Category;
-import com.example.chatapplication.domain.Movies;
-import com.example.chatapplication.domain.SubMovie;
+import com.example.chatapplication.domain.*;
 import com.example.chatapplication.model.pageable.OffsetPageable;
 import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.model.query.QueryDto;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.response.ResponseListAll;
 import com.example.chatapplication.model.response.ResponseMessage;
-import com.example.chatapplication.model.view.CategoryView;
-import com.example.chatapplication.model.view.EpisodeView;
-import com.example.chatapplication.model.view.MovieView;
-import com.example.chatapplication.model.view.MoviesHomeView;
-import com.example.chatapplication.repository.CategoryRepository;
-import com.example.chatapplication.repository.MoviesRepository;
-import com.example.chatapplication.repository.SubMovieRepository;
+import com.example.chatapplication.model.view.*;
+import com.example.chatapplication.repository.*;
 import com.example.chatapplication.service.impl.AbstractJpaDAO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,17 +34,23 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
     private final ObjectMapper objectMapper;
 
     private final SubMovieRepository subMovieRepository;
+    private OrderPackageRepository orderPackageRepository;
+    private PackageRepository packageRepository;
 
     public MoviesQueryService(MoviesRepository moviesRepository,
                               ObjectMapper objectMapper,
                               CategoryRepository categoryRepository,
-                              SubMovieRepository subMovieRepository
+                              SubMovieRepository subMovieRepository,
+                              OrderPackageRepository orderPackageRepository,
+                              PackageRepository packageRepository
     ) {
         super(Movies.class);
         this.moviesRepository = moviesRepository;
         this.objectMapper = objectMapper;
         this.categoryRepository = categoryRepository;
         this.subMovieRepository = subMovieRepository;
+        this.orderPackageRepository = orderPackageRepository;
+        this.packageRepository = packageRepository;
     }
 
 
@@ -90,7 +89,7 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
     }
 
 
-    public CommonRes<?> findDetailMovie(Long id) {
+    public CommonRes<?> findDetailMovie(Long id, Long userId) {
         Optional<Movies> moviesOptional = moviesRepository.findById(id);
         List<Category> categories = categoryRepository.findByMovieId(id);
         List<SubMovie> subMovies = new ArrayList<>();
@@ -100,7 +99,15 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
             moviesRepository.save(movies);
             subMovies = subMovieRepository.findByMovieIdOrderByEpisode(id);
         }
-        return Utils.createSuccessResponse(convertToView(moviesOptional.isEmpty() ? new Movies() : moviesOptional.get(), categories,subMovies));
+        MovieView movieView = convertToView(moviesOptional.isEmpty() ? new Movies() : moviesOptional.get(), categories, subMovies);
+        Integer canPlay;
+        if (userId == null) {
+            canPlay = 0;
+        } else {
+            canPlay = checkAuthorizedMovie(userId,id);
+        }
+        movieView.setCanPlay(canPlay);
+        return Utils.createSuccessResponse(movieView);
     }
 
     private MovieView convertToView(Movies movies, List<Category> categories) {
@@ -111,12 +118,12 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
         return movieView;
     }
 
-    private MovieView convertToView(Movies movies, List<Category> categories,List<SubMovie> subMovies) {
+    private MovieView convertToView(Movies movies, List<Category> categories, List<SubMovie> subMovies) {
         MovieView movieView = new MovieView();
         BeanUtil.copyProperties(movies, movieView, false);
         List<CategoryView> categoryViews = categories.stream().map(e -> convertToCategoryView(e)).collect(Collectors.toList());
         movieView.setCategories(categoryViews);
-        List<EpisodeView> episodeViews = subMovies.stream().map(e-> EpisodeView.builder()
+        List<EpisodeView> episodeViews = subMovies.stream().map(e -> EpisodeView.builder()
                 .episode(e.getEpisode())
                 .publicDate(e.getPublicDate())
                 .src(e.getName())
@@ -126,6 +133,7 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
         movieView.setEpisode(episodeViews);
         return movieView;
     }
+
     private CategoryView convertToCategoryView(Category category) {
         return CategoryView.builder()
                 .code(category.getCode())
@@ -169,7 +177,7 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
         return Utils.createSuccessResponse(convertToListMoviewView(movies.getContent()));
     }
 
-    public List<Movies> getAllMovie(){
+    public List<Movies> getAllMovie() {
         return moviesRepository.findAll();
     }
 
@@ -181,5 +189,18 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
         }
         return Utils.createSuccessResponse(ResponseMessage.builder().message("FAIL").build());
 
+    }
+
+
+    public Integer checkAuthorizedMovie(Long userId, Long movieId) {
+        List<OrderPackage> myPackages = orderPackageRepository.findOrderPackageByUserId(userId);
+        List<Packages> packagesMovieIn = packageRepository.findPackagesByMovieIn(movieId);
+        System.out.println(packagesMovieIn);
+        List<Long> packageIds = packagesMovieIn.stream().map(e -> e.getId()).collect(Collectors.toList());
+        List<OrderPackage> checkAuthorized = myPackages.stream().filter(e -> packageIds.contains(e.getId().getPackageId())).collect(Collectors.toList());
+        if (checkAuthorized.isEmpty()) {
+            return 0;
+        }
+        return 1;
     }
 }

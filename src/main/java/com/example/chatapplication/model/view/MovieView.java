@@ -28,6 +28,7 @@ public class MovieView {
     private Date releaseDate;
     private List<CategoryView> categories;
     private List<EpisodeView> episode = new ArrayList<>();
+    private Integer canPlay;
 //    private String categoryCode;
 //    private String categoryName;
 }

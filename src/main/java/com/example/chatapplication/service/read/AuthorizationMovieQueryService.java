@@ -36,6 +36,5 @@ public class AuthorizationMovieQueryService {
             return Utils.createSuccessResponse(AuthorizeMovieView.builder().isAuthorized(0).build());
         }
         return Utils.createSuccessResponse(AuthorizeMovieView.builder().isAuthorized(1).build());
-
     }
 }

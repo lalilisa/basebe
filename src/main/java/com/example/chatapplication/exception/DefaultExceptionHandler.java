@@ -12,7 +12,7 @@ import org.zalando.problem.spring.web.advice.ProblemHandling;
 
 import java.util.Date;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class DefaultExceptionHandler implements ProblemHandling {
 
 

@@ -1,11 +1,13 @@
 package com.example.chatapplication.service.fileservice;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
@@ -17,8 +19,16 @@ import java.util.stream.Stream;
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
 
-    private final Path root = Paths.get("uploads");
+    private static Path root = Paths.get("uploads");
 
+    @Value("${app.locationVideo}")
+    private String pathSave ;
+
+
+    @PostConstruct
+    public void initLocation(){
+        root = Paths.get(pathSave);
+    }
     @Override
     public void init() {
         try {
@@ -37,7 +47,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
                 throw new RuntimeException("A file of that name already exists.");
             }
 
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 

@@ -2,15 +2,20 @@ package com.example.chatapplication.controller;
 
 import com.example.chatapplication.anotation.IsAdmin;
 import com.example.chatapplication.common.Utils;
+import com.example.chatapplication.model.command.CreateMovieCommand;
 import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.model.response.CommonRes;
+import com.example.chatapplication.model.springsecurity.UserSercurity;
+import com.example.chatapplication.service.fileservice.FilesStorageService;
 import com.example.chatapplication.service.read.MoviesQueryService;
 import com.example.chatapplication.service.write.MovieCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,6 +23,8 @@ import java.util.Map;
 public class MoviesController {
 
     private final MoviesQueryService moviesQueryService;
+
+    private final FilesStorageService storageService;
     @GetMapping()
     public ResponseEntity<?> getMovies(MoviesFilterQuery query){
         return ResponseEntity.ok(moviesQueryService.findMovies(query));
@@ -39,16 +46,23 @@ public class MoviesController {
         return ResponseEntity.ok(Utils.createSuccessResponse(moviesQueryService.getAllMovie()));
     }
     @GetMapping("{id}")
-    public ResponseEntity<?> getDetailMovies(@PathVariable("id") Long id){
+    public ResponseEntity<?> getDetailMovies(@PathVariable("id") Long id, Authentication authentication){
+        Optional<UserSercurity> userSercurity = Optional.ofNullable(authentication)
+                .map(e -> (UserSercurity) authentication.getPrincipal())
+                .stream().findFirst();
         System.out.println("DETAIL MOVIES");
-        return ResponseEntity.ok(moviesQueryService.findDetailMovie(id));
+        System.out.println(userSercurity.orElse(null));
+        return ResponseEntity.ok(moviesQueryService.findDetailMovie(id, userSercurity.map(UserSercurity::getUserId).orElse(null)));
     }
 
 
-    @PostMapping("")
-    @IsAdmin
-    public ResponseEntity<?> createMovie(){
-        System.out.println("DETAIL MOVIES");
+
+    @PostMapping(value = "", consumes = {"multipart/form-data"})
+//    @IsAdmin
+    public ResponseEntity<?> createMovie(@ModelAttribute CreateMovieCommand createMovieCommand){
+//        CommonRes<?> commonRes = movieCommandService.createMovie(createMovieCommand);
+//        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+        storageService.save(createMovieCommand.getSubMovie().get(0));
         return ResponseEntity.ok("");
     }
     private final MovieCommandService movieCommandService;
