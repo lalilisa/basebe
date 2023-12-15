@@ -9,6 +9,7 @@ import com.example.chatapplication.model.springsecurity.UserSercurity;
 import com.example.chatapplication.service.read.UserQueryService;
 import com.example.chatapplication.service.write.UserCommandService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,8 +30,9 @@ public class UserController {
          return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
 
-    @PutMapping("user-info")
-    public ResponseEntity<?> updateUserInfo(Authentication authentication,@RequestBody UpdateUser user){
+    @PutMapping(value = "user-info",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> updateUserInfo(Authentication authentication,@ModelAttribute UpdateUser user,MultipartFile avatar){
+        System.out.println(avatar);
         UserDetails userDetails=(UserDetails) authentication.getPrincipal();
         CommonRes<?> commonRes = userCommandService.updateUser(userDetails.getUsername(),user);
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
