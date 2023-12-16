@@ -8,6 +8,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
@@ -39,9 +40,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public void save(MultipartFile file) {
+    public String save(MultipartFile file,String folderName) {
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
+            Path parrent = Files.createDirectories(Paths.get(pathSave.concat(File.pathSeparator).concat(folderName)));
+            Files.copy(file.getInputStream(), parrent.resolve(file.getOriginalFilename()));
+            return "/"+folderName+"/"+file.getOriginalFilename();
         } catch (Exception e) {
             if (e instanceof FileAlreadyExistsException) {
                 throw new RuntimeException("A file of that name already exists.");

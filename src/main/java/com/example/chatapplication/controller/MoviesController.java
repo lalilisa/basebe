@@ -60,10 +60,8 @@ public class MoviesController {
     @PostMapping(value = "", consumes = {"multipart/form-data"})
 //    @IsAdmin
     public ResponseEntity<?> createMovie(@ModelAttribute CreateMovieCommand createMovieCommand){
-//        CommonRes<?> commonRes = movieCommandService.createMovie(createMovieCommand);
-//        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
-        storageService.save(createMovieCommand.getSubMovie().get(0));
-        return ResponseEntity.ok("");
+        CommonRes<?> commonRes = movieCommandService.createMovie(createMovieCommand);
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
     private final MovieCommandService movieCommandService;
     @PutMapping("{id}")

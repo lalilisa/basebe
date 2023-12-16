@@ -1,5 +1,6 @@
 package com.example.chatapplication.model.command;
 
+import com.example.chatapplication.domain.SubMovie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,6 @@ public class CreateMovieCommand {
     private MultipartFile thumnail;
     private Integer active;
 //    private Date releaseDate;
-    private List<MultipartFile> subMovie;
+    private List<SubMovieCommand> subMovie;
     private List<Long> categoriesIds;
 }
