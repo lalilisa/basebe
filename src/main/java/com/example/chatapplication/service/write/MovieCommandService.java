@@ -12,6 +12,7 @@ import com.example.chatapplication.domain.compositekey.MovieCategoryKey;
 import com.example.chatapplication.model.command.CreateMovieCommand;
 import com.example.chatapplication.model.command.SubMovieCommand;
 import com.example.chatapplication.model.response.CommonRes;
+import com.example.chatapplication.model.response.ResponseMessage;
 import com.example.chatapplication.model.view.CategoryView;
 import com.example.chatapplication.model.view.EpisodeView;
 import com.example.chatapplication.model.view.MovieView;
@@ -23,6 +24,7 @@ import com.example.chatapplication.service.fileservice.FilesStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +65,7 @@ public class MovieCommandService {
                 .description(command.getDescription())
                 .active(command.getActive())
                 .duration(command.getDuration())
+                .view(0)
 //                .releaseDate(command.getReleaseDate())
                 .code(command.getCode())
                 .thumnail(thumnailSrc)
@@ -74,15 +77,6 @@ public class MovieCommandService {
             ).collect(Collectors.toList());
             movieCategoryRepository.saveAll(movieCategories);
         }
-        CompletableFuture<List<SubMovie>> completableFuture = new CompletableFuture<>();
-        upVideo(command.getSubMovie(),command.getName());
-        List<SubMovie> subMovies = new ArrayList<>();
-        try {
-            subMovies = completableFuture.get();
-        } catch (Exception e) {
-            log.error("",e);
-        }
-        subMovieRepository.saveAll(subMovies);
         List<Category> categories = categoryRepository.findByMovieId(newMovie.getId());
         return Utils.createSuccessResponse(convertToView(newMovie, categories));
     }
@@ -113,6 +107,7 @@ public class MovieCommandService {
 
     private CategoryView convertToCategoryView(Category category) {
         return CategoryView.builder()
+                .id(category.getId())
                 .code(category.getCode())
                 .name(category.getName())
                 .build();
@@ -120,22 +115,49 @@ public class MovieCommandService {
 
     private final FilesStorageService storageService;
     private final SubMovieRepository subMovieRepository;
-    private void upVideo(List<SubMovieCommand> subMovies,String folderName){
-        List<SubMovie> subMoviesDomain = new ArrayList<>();
-        subMovies.parallelStream().forEach(e->{
+    private String upVideo(MultipartFile file, String folderName,String fileName){
+        return storageService.save(file,folderName,fileName);
+    }
+
+    public CommonRes<?> createSubMovie(SubMovieCommand command){
+        Optional<Movies> moviesOptional = moviesRepository.findById(command.getMovieId());
+        if(moviesOptional.isPresent()){
+            Movies movies = moviesOptional.get();
             SubMovie subMovie = SubMovie.builder()
-                    .movieId(e.getMovieId())
-                    .episode(e.getEpisode())
+                    .movieId(command.getMovieId())
+                    .episode(command.getEpisode())
+                    .name(command.getName())
+                    .src(upVideo(command.getFile(),movies.getName(),movies.getName()+command.getEpisode().toString()))
                     .build();
-            String src =   storageService.save(e.getFile(),folderName);
+            return Utils.createSuccessResponse(subMovieRepository.save(subMovie));
+        }
+        return Utils.createErrorResponse(400,"MNE","Movie is not exist");
+    }
+
+    public CommonRes<?> updateSubMovie(Long subMovieId , SubMovieCommand command){
+        Optional<Movies> moviesOptional = moviesRepository.findById(command.getMovieId());
+        Optional<SubMovie> subMovieOptional = subMovieRepository.findById(subMovieId);
+        if(moviesOptional.isPresent() && subMovieOptional.isPresent()){
+            Movies movies = moviesOptional.get();
+            SubMovie subMovie = subMovieOptional.get();
+            subMovie.setEpisode(command.getEpisode() != null ? command.getEpisode() : subMovie.getEpisode());
+            subMovie.setName(command.getName() != null ? command.getName() : subMovie.getName());
+           // subMovie.setSrc(command.getSrc() != null ? command.getSrc() : subMovie.getSrc());
+            String src = storageService.save(command.getFile(),movies.getName(),movies.getName()+command.getEpisode());
             subMovie.setSrc(src);
-            subMoviesDomain.add(subMovie);
-            if(subMoviesDomain.size() == subMovies.size()){
-               if(mapUpload.containsKey(e.getMovieId().toString())){
-                    CompletableFuture<List<SubMovie>> subMovieCompletableFuture = mapUpload.get(e.getMovieId().toString());
-                    subMovieCompletableFuture.complete(subMoviesDomain);
-               }
-            }
-        });
+            return Utils.createSuccessResponse(subMovieRepository.save(subMovie));
+        }
+        return Utils.createErrorResponse(400,"MNE","Movie is not exist");
+    }
+
+    public CommonRes<?> deleteSubMovie(Long subMovieId ){
+
+        Optional<SubMovie> subMovieOptional = subMovieRepository.findById(subMovieId);
+        if(subMovieOptional.isPresent()){
+            subMovieRepository.delete(subMovieOptional.get());
+            return Utils.createSuccessResponse(ResponseMessage
+                    .builder().message("SUCCESS").build());
+        }
+        return Utils.createErrorResponse(400,"MNE","Movie is not exist");
     }
 }

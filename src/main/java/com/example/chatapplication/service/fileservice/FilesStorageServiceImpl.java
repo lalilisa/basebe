@@ -11,10 +11,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.stream.Stream;
 
 @Service
@@ -40,16 +37,20 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public String save(MultipartFile file,String folderName) {
+    public String save(MultipartFile file,String folderName , String fileName) {
         try {
-            Path parrent = Files.createDirectories(Paths.get(pathSave.concat(File.pathSeparator).concat(folderName)));
-            Files.copy(file.getInputStream(), parrent.resolve(file.getOriginalFilename()));
-            return "/"+folderName+"/"+file.getOriginalFilename();
+
+            String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            Path parrent = Files.createDirectories(Paths.get(pathSave.concat(File.separator).concat(folderName)));
+            String fileNameSave = fileName.concat(extension);
+            Files.deleteIfExists(parrent.resolve(fileNameSave));
+            System.out.println(parrent.toAbsolutePath());
+            Files.copy(file.getInputStream(), parrent.resolve(fileNameSave));
+            return "/"+folderName+"/"+fileNameSave;
         } catch (Exception e) {
             if (e instanceof FileAlreadyExistsException) {
                 throw new RuntimeException("A file of that name already exists.");
             }
-
             throw new RuntimeException(e);
         }
     }

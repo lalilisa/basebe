@@ -3,6 +3,7 @@ package com.example.chatapplication.controller;
 import com.example.chatapplication.anotation.IsAdmin;
 import com.example.chatapplication.common.Utils;
 import com.example.chatapplication.model.command.CreateMovieCommand;
+import com.example.chatapplication.model.command.SubMovieCommand;
 import com.example.chatapplication.model.query.MoviesFilterQuery;
 import com.example.chatapplication.model.response.CommonRes;
 import com.example.chatapplication.model.springsecurity.UserSercurity;
@@ -56,11 +57,31 @@ public class MoviesController {
     }
 
 
-
     @PostMapping(value = "", consumes = {"multipart/form-data"})
 //    @IsAdmin
     public ResponseEntity<?> createMovie(@ModelAttribute CreateMovieCommand createMovieCommand){
         CommonRes<?> commonRes = movieCommandService.createMovie(createMovieCommand);
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+    }
+
+    @PostMapping(value = "submovie", consumes = {"multipart/form-data"})
+//    @IsAdmin
+    public ResponseEntity<?> createSubMovie(@ModelAttribute SubMovieCommand command){
+        CommonRes<?> commonRes = movieCommandService.createSubMovie(command);
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+    }
+
+    @PutMapping(value = "submovie/{id}", consumes = {"multipart/form-data"})
+//    @IsAdmin
+    public ResponseEntity<?> eidtSubMovie(@PathVariable Long id,@ModelAttribute SubMovieCommand command){
+        CommonRes<?> commonRes = movieCommandService.updateSubMovie(id,command);
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+    }
+
+    @DeleteMapping(value = "submovie/{id}")
+//    @IsAdmin
+    public ResponseEntity<?> deleteSubMovie(@PathVariable Long id){
+        CommonRes<?> commonRes = movieCommandService.deleteSubMovie(id);
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
     private final MovieCommandService movieCommandService;

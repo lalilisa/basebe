@@ -19,7 +19,7 @@ import java.util.Date;
 public class SubMovieCommand {
 
     private String name;
-    private Date publicDate;
+//    private Date publicDate;
     private Long movieId;
     private Integer episode;
     private String src;

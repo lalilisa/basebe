@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -21,9 +22,10 @@ public class CreateMovieCommand {
     private String description;
     private String moviesType;
     private String duration;
+
+    @Nullable
     private MultipartFile thumnail;
     private Integer active;
 //    private Date releaseDate;
-    private List<SubMovieCommand> subMovie;
     private List<Long> categoriesIds;
 }
