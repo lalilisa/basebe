@@ -64,6 +64,12 @@ public class MoviesController {
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
 
+    @GetMapping(value = "submovie/{id}")
+//    @IsAdmin
+    public ResponseEntity<?> getListSubMovie(@PathVariable Long id){
+        CommonRes<?> commonRes = Utils.createSuccessResponse(moviesQueryService.getSubMovie(id));
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+    }
     @PostMapping(value = "submovie", consumes = {"multipart/form-data"})
 //    @IsAdmin
     public ResponseEntity<?> createSubMovie(@ModelAttribute SubMovieCommand command){
@@ -84,11 +90,18 @@ public class MoviesController {
         CommonRes<?> commonRes = movieCommandService.deleteSubMovie(id);
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
+
+    @PutMapping("active/{id}")
+    @IsAdmin
+    public ResponseEntity<?> activeSubMovie(@PathVariable Long id,@RequestBody Map<String,Integer> active){
+        CommonRes<?> commonRes =  movieCommandService.activeMovie(id,active.get("active"));
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+    }
     private final MovieCommandService movieCommandService;
-    @PutMapping("{id}")
+    @PutMapping("/submovie/active/{id}")
     @IsAdmin
     public ResponseEntity<?> activeMovie(@PathVariable Long id,@RequestBody Map<String,Integer> active){
-        CommonRes<?> commonRes =  movieCommandService.activeMovie(id,active.get("active"));
+        CommonRes<?> commonRes =  movieCommandService.activeSubMovie(id,active.get("active"));
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
 

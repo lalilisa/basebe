@@ -10,4 +10,5 @@ import java.util.List;
 public interface SubMovieRepository extends JpaRepository<SubMovie,Long> {
 
     List<SubMovie> findByMovieIdOrderByEpisode(Long movieId);
+
 }

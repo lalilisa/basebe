@@ -181,6 +181,9 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
         return moviesRepository.findAll();
     }
 
+    public List<SubMovie> getSubMovie(Long movieId){
+        return subMovieRepository.findByMovieIdOrderByEpisode(movieId);
+    }
     public CommonRes<?> deleteMovie(Long id) {
         Optional<Movies> moviesOptional = moviesRepository.findById(id);
         if (moviesOptional.isPresent()) {

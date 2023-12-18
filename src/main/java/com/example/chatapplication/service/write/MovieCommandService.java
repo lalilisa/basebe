@@ -56,6 +56,16 @@ public class MovieCommandService {
         return Utils.createErrorResponse(400, "Movie is not exists");
     }
 
+    public CommonRes<?> activeSubMovie(Long subMovieId, Integer active) {
+        Optional<SubMovie> subMovie = subMovieRepository.findById(subMovieId);
+        if (subMovie.isPresent()) {
+            SubMovie subMovie1 = subMovie.get();
+            subMovie1.setActive(active);
+            return Utils.createSuccessResponse(subMovieRepository.save(subMovie1));
+        }
+        return Utils.createErrorResponse(400, "Movie is not exists");
+    }
+
     public CommonRes<?> createMovie(CreateMovieCommand command)   {
         String thumnailSrc = cloudinaryService.uploadURl(command.getThumnail());
         Movies movies = Movies.builder()
