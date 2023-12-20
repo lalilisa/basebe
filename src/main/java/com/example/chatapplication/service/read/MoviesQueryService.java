@@ -206,4 +206,8 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
         }
         return 1;
     }
+
+    public SubMovie getDetailMovie(Long subMovieId){
+        return subMovieRepository.findById(subMovieId).orElse(null);
+    }
 }

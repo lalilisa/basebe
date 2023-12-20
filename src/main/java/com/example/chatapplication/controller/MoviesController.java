@@ -70,6 +70,13 @@ public class MoviesController {
         CommonRes<?> commonRes = Utils.createSuccessResponse(moviesQueryService.getSubMovie(id));
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
+
+    @GetMapping(value = "submovie/detail/{id}")
+//    @IsAdmin
+    public ResponseEntity<?> getDetailSubMovie(@PathVariable Long id){
+        CommonRes<?> commonRes = Utils.createSuccessResponse(moviesQueryService.getDetailMovie(id));
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+    }
     @PostMapping(value = "submovie", consumes = {"multipart/form-data"})
 //    @IsAdmin
     public ResponseEntity<?> createSubMovie(@ModelAttribute SubMovieCommand command){
