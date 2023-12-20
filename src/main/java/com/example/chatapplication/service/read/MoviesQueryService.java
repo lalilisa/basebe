@@ -136,6 +136,7 @@ public class MoviesQueryService extends AbstractJpaDAO<Movies> {
 
     private CategoryView convertToCategoryView(Category category) {
         return CategoryView.builder()
+                .id(category.getId())
                 .code(category.getCode())
                 .name(category.getName())
                 .build();

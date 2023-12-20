@@ -44,7 +44,7 @@ public class MovieCommandService {
     private final CloudinaryService cloudinaryService;
     private final MovieCategoryRepository movieCategoryRepository;
 
-    public static Map<String,CompletableFuture<List<SubMovie>>> mapUpload = new ConcurrentHashMap<>();
+    public static Map<String, CompletableFuture<List<SubMovie>>> mapUpload = new ConcurrentHashMap<>();
 
     public CommonRes<?> activeMovie(Long movieId, Integer active) {
         Optional<Movies> movies = moviesRepository.findById(movieId);
@@ -66,7 +66,7 @@ public class MovieCommandService {
         return Utils.createErrorResponse(400, "Movie is not exists");
     }
 
-    public CommonRes<?> createMovie(CreateMovieCommand command)   {
+    public CommonRes<?> createMovie(CreateMovieCommand command) {
         String thumnailSrc = cloudinaryService.uploadURl(command.getThumnail());
         Movies movies = Movies.builder()
                 .moviesType(command.getMoviesType())
@@ -125,49 +125,89 @@ public class MovieCommandService {
 
     private final FilesStorageService storageService;
     private final SubMovieRepository subMovieRepository;
-    private String upVideo(MultipartFile file, String folderName,String fileName){
-        return storageService.save(file,folderName,fileName);
+
+    private String upVideo(MultipartFile file, String folderName, String fileName) {
+        return storageService.save(file, folderName, fileName);
     }
 
-    public CommonRes<?> createSubMovie(SubMovieCommand command){
+    public CommonRes<?> createSubMovie(SubMovieCommand command) {
         Optional<Movies> moviesOptional = moviesRepository.findById(command.getMovieId());
-        if(moviesOptional.isPresent()){
+        if (moviesOptional.isPresent()) {
             Movies movies = moviesOptional.get();
             SubMovie subMovie = SubMovie.builder()
                     .movieId(command.getMovieId())
                     .episode(command.getEpisode())
                     .name(command.getName())
-                    .src(upVideo(command.getFile(),movies.getName(),movies.getName()+command.getEpisode().toString()))
                     .build();
+            if(command.getFile() != null){
+                String src = upVideo(command.getFile(), movies.getName(), movies.getName() + command.getEpisode().toString());
+                subMovie.setSrc(src);
+            }
             return Utils.createSuccessResponse(subMovieRepository.save(subMovie));
         }
-        return Utils.createErrorResponse(400,"MNE","Movie is not exist");
+        return Utils.createErrorResponse(400, "MNE", "Movie is not exist");
     }
 
-    public CommonRes<?> updateSubMovie(Long subMovieId , SubMovieCommand command){
+    public CommonRes<?> updateSubMovie(Long subMovieId, SubMovieCommand command) {
         Optional<Movies> moviesOptional = moviesRepository.findById(command.getMovieId());
         Optional<SubMovie> subMovieOptional = subMovieRepository.findById(subMovieId);
-        if(moviesOptional.isPresent() && subMovieOptional.isPresent()){
+        if (moviesOptional.isPresent() && subMovieOptional.isPresent()) {
             Movies movies = moviesOptional.get();
             SubMovie subMovie = subMovieOptional.get();
             subMovie.setEpisode(command.getEpisode() != null ? command.getEpisode() : subMovie.getEpisode());
             subMovie.setName(command.getName() != null ? command.getName() : subMovie.getName());
-           // subMovie.setSrc(command.getSrc() != null ? command.getSrc() : subMovie.getSrc());
-            String src = storageService.save(command.getFile(),movies.getName(),movies.getName()+command.getEpisode());
-            subMovie.setSrc(src);
+            // subMovie.setSrc(command.getSrc() != null ? command.getSrc() : subMovie.getSrc());
+            String src;
+            if (command.getFile() != null) {
+                src = storageService.save(command.getFile(), movies.getName(), movies.getName() + command.getEpisode());
+                subMovie.setSrc(src);
+            }
             return Utils.createSuccessResponse(subMovieRepository.save(subMovie));
         }
-        return Utils.createErrorResponse(400,"MNE","Movie is not exist");
+        return Utils.createErrorResponse(400, "MNE", "Movie is not exist");
     }
 
-    public CommonRes<?> deleteSubMovie(Long subMovieId ){
+    public CommonRes<?> deleteSubMovie(Long subMovieId) {
 
         Optional<SubMovie> subMovieOptional = subMovieRepository.findById(subMovieId);
-        if(subMovieOptional.isPresent()){
+        if (subMovieOptional.isPresent()) {
             subMovieRepository.delete(subMovieOptional.get());
             return Utils.createSuccessResponse(ResponseMessage
                     .builder().message("SUCCESS").build());
         }
-        return Utils.createErrorResponse(400,"MNE","Movie is not exist");
+        return Utils.createErrorResponse(400, "MNE", "Movie is not exist");
+    }
+
+    public CommonRes<?> updateMovie(Long movieId, CreateMovieCommand command) {
+        Optional<Movies> moviesOptional = moviesRepository.findById(movieId);
+        System.out.println(command);
+        if (moviesOptional.isPresent()) {
+            String thumnailSrc = null;
+            if (command.getThumnail() != null) {
+                thumnailSrc = cloudinaryService.uploadURl(command.getThumnail());
+            }
+            Movies updateMovie = moviesOptional.get();
+
+            updateMovie.setMoviesType(command.getMoviesType() == null ? updateMovie.getMoviesType() : command.getMoviesType());
+            updateMovie.setName(command.getName() == null ? updateMovie.getName() : command.getName());
+            updateMovie.setDescription(command.getDescription());
+
+            updateMovie.setActive(command.getActive() == null ? updateMovie.getActive() : command.getActive());
+            updateMovie.setDuration(command.getDuration() == null ? updateMovie.getDuration() : command.getDuration());
+//                .releaseDate(command.getReleaseDate())
+            updateMovie.setCode(command.getCode() == null ? updateMovie.getCode() : command.getCode());
+            if (thumnailSrc != null)
+                updateMovie.setThumnail(thumnailSrc);
+            Movies afterUpdateMovie = moviesRepository.save(updateMovie);
+            if (command.getCategoriesIds() != null) {
+                List<MovieCategory> movieCategories = command.getCategoriesIds().stream().map(e ->
+                        new MovieCategory(new MovieCategoryKey(afterUpdateMovie.getId(), e))
+                ).collect(Collectors.toList());
+                movieCategoryRepository.saveAll(movieCategories);
+            }
+            List<Category> categories = categoryRepository.findByMovieId(afterUpdateMovie.getId());
+            return Utils.createSuccessResponse(convertToView(updateMovie, categories));
+        }
+        return Utils.createErrorResponse(400, "MNF", "MOVIE NOT FOUND");
     }
 }

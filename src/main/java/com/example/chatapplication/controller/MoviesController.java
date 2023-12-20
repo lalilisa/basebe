@@ -87,10 +87,17 @@ public class MoviesController {
     @PutMapping(value = "submovie/{id}", consumes = {"multipart/form-data"})
 //    @IsAdmin
     public ResponseEntity<?> eidtSubMovie(@PathVariable Long id,@ModelAttribute SubMovieCommand command){
+        System.out.println(id);
         CommonRes<?> commonRes = movieCommandService.updateSubMovie(id,command);
         return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
     }
 
+    @PutMapping(value = "{id}", consumes = {"multipart/form-data"})
+//    @IsAdmin
+    public ResponseEntity<?> eidtMovie(@PathVariable Long id,@ModelAttribute CreateMovieCommand command){
+        CommonRes<?> commonRes = movieCommandService.updateMovie(id,command);
+        return ResponseEntity.status(commonRes.getStatusCode()).body(commonRes);
+    }
     @DeleteMapping(value = "submovie/{id}")
 //    @IsAdmin
     public ResponseEntity<?> deleteSubMovie(@PathVariable Long id){
