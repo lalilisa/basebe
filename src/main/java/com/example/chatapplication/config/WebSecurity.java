@@ -80,7 +80,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                         "/api/v1/review",
                         "/api/v1/review/reply",
                         "/api/v1/category/all",
-                        "api/v1/package"
+                        "/api/v1/package",
+                        "/callback-order"
                         )
                 .permitAll()
                 .antMatchers( HttpMethod.POST,"/test/file").permitAll()

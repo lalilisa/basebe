@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -56,7 +57,7 @@ public class UserQueryService {
         Optional<Packages> packages = packageRepository.findByCodeAndActive("NORMAL", true);
         if (packages.isPresent()) {
             OrderPackageKey orderPackageKey = new OrderPackageKey(newUser.getId(), packages.get().getId());
-            orderPackageRepository.save(new OrderPackage(orderPackageKey));
+            orderPackageRepository.save(new OrderPackage(orderPackageKey,1, UUID.randomUUID().toString()));
         }
         return Utils.createSuccessResponse(this.convertToView(newUser));
     }
